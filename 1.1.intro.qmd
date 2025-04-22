@@ -1,0 +1,232 @@
+---
+title: "Evaluación de políticas educativas"
+author: "Pablo Geraldo Bastías"
+logo: "https://fundit.fr/sites/default/files/styles/max_650x650/public/institutions/capture-decran-2023-07-07-162216.png?itok=1CkwlJEu"
+include-in-header:
+  - text: |
+      <style>
+      .reveal .slide-logo {
+        max-height: unset;
+        height: 100px;
+      }
+      </style>
+footer: "Introducción"
+date: 04/22/2025
+date-format: long
+format: 
+  revealjs:
+    theme: simple
+    width: 1600
+    height: 900
+    transition: slide
+    slide-number: c/t
+    chalkboard: true
+    auto-stretch: false
+callout-appearance: minimal
+---
+
+# Motivación {background-color="#00a191"}
+
+\newcommand\indep{\perp\!\!\!\perp}
+\newcommand\nindep{\not\!\perp\!\!\!\perp}
+
+
+## ¿Por qué debería importarnos la inferencia causal?
+
+. . .
+
+<br>
+Las ciencias sociales están experimentando lo que algunos autores han descrito como el auge del "empirismo causal" (Samii, 2016), una "revolución de credibilidad" (Angrist y Pischke, 2010), o simplemente una "revolución causal" (Pearl y MacKenzie, 2018)
+
+. . .
+
+En inteligencia artificial/ML, la causalidad ha sido considerada [**"la próxima frontera"**](https://phys.org/news/2019-02-causal-disentanglement-frontier-ai.html) y [**"el siguiente paso más importante"**](https://www.datasciencecentral.com/profiles/blogs/causality-the-next-most-important-thing-in-ai-ml)
+
+. . .
+
+El enorme progreso en las últimas décadas ha sido facilitado por el desarrollo de marcos matemáticos que proporcionan a los investigadores herramientas para manejar preguntas causales: [Resultados Potenciales]{.fragment .highlight-red} y el [Modelo Causal Estructural]{.fragment .highlight-red}
+
+---
+
+
+## ¿Qué esperar de este taller?
+
+<br>
+
+Esta curso está diseñado como un primer curso en inferencia causal para la evaluación de políticas educativas, por lo que podemos enfocarnos solo en algunas cosas:
+
+* Familiarizarte con los marcos de inferencia causal más utilizados
+
+* Entender el papel de la aleatorización para abordar preguntas causales
+
+* Usar resultados potenciales para formalizar la cantidad de interés
+
+* Usar gráficos acíclicos direccionales (DAGs) para codificar supuestos
+
+* Derivar resultados de identificación e implicaciones comprobables a partir de un DAG
+
+* Evaluar la plausibilidad de diferentes estrategias de identificación aplicadas a problemas reales
+
+
+## ¿Qué esperar de este taller?
+
+<br>
+
+En sesiones posteriores, nos enfocaremos en algunas estrategias de identificación comúnmente utilizadas:
+
+* Selección sobre observables (regresión, imputación, emparejamiento, ponderación, métodos doblemente robustos y estimación flexible usando aprendizaje automático)
+
+* Variables instrumentales y diseños de regresión discontinua
+
+* Diferencia en diferencias, controles sintéticos y extensiones
+
+* Robustez y análisis de sensibilidad
+
+
+## Pero, primero: ¿Cuál es tu estimando?
+
+Los investigadores, al menos los científicos sociales, tienden a formalizar su efecto de interés como **coeficientes de regresión** (es decir, sus hipótesis se formulan dentro de un modelo estadístico)
+
+[[**¡Esto es demasiado restrictivo!**]()]{.fragment .fade-in}
+
+. . . 
+
+Los resultados potenciales ofrecen una manera de formalizar lo que entendemos por *efecto causal* fuera de cualquier modelo estadístico. Los modelos gráficos proporcionan un modo de formalizar nuestros *supuestos* sin restricciones paramétricas.
+
+. . .
+
+Esto nos permite separar claramente *qué queremos* (un cierto **estimando**), qué necesita ser verdad para obtener lo que queremos (**supuestos de identificación**), la maquinaria estadística para transformar los datos en una respuesta a nuestra pregunta (un **estimador**), y la respuesta particular que obtenemos (nuestra **estimación** empírica).
+
+:::{.aside}
+Lundberg, Johnson y Stewart (2021) discuten este punto en gran detalle.
+:::
+
+## Pero, primero: ¿Cuál es tu estimando?
+
+
+![](img/Lundberg_estimand.jpeg){fig-align="center" width=70%}
+
+
+
+
+# ¿De qué se trata la inferencia causal? {background-color="#00a191"}
+
+
+## Intuiciones sobre causalidad
+
+### ¿Has escuchado alguna de estas frases?
+
+<br>
+
+"La correlación no implica causalidad"
+
+
+:::{.fragment .r-stack}
+*¿Pero podemos pasar de una a otra?*
+:::
+
+
+"No hay causalidad sin manipulación"
+
+
+:::{.fragment .r-stack}
+*¿Entonces qué hay de la raza o el género?*
+:::
+
+
+"La inferencia causal es un problema de datos faltantes"
+
+
+:::{.fragment .r-stack}
+*¿O es al revés?*
+:::
+
+
+"Para la inferencia causal, el diseño supera al análisis"
+
+
+:::{.fragment .r-stack}
+*¿Pero qué queremos decir con diseño? ¿Y análisis?*
+:::
+
+
+
+## Estadística/ML vs Inferencia Causal
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Estadística/ML***
+
++ Observación pasiva del proceso generador de datos
++ Estimando: Probabilidades conjuntas, FEC
+$$P(Y,X)$$
+$$E(Y|X=x)$$
++ Enfoque en asintótica / predicción fuera de muestra
++ Problema de estimación: compensación varianza-sesgo
++ Pearl: "el aprendizaje profundo es solo ajuste de curvas"
+:::
+
+::: {.column width="50%"}
+***Inferencia Causal***
+
++ Predicción **bajo intervenciones** en el PGD
++ Estimando: cantidades de intervención
+$$P(Y|do(x))$$ 
+$$E(Y|do(x)) - E(Y|do(x'))$$ 
+$$= E(Y_x) - E(Y_{x'})$$
++ Problema de identificación: consistencia (muestra infinita)
++ Problema de estimación: en general, enfoque en sesgo sobre varianza (pero cambiando)
+:::
+
+:::
+---
+
+## La escalera de la causalidad
+
+![](img/causation_ladder.png){fig-align="center" width=50%}
+
+:::{.aside}
+Dibujo por Maayan Harel, TBOW
+:::
+
+
+## La escalera de la causalidad {background-color="#002F87"}
+
+:::{.panel-tabset}
+
+## Asociación
+
+| Estimando | Actividad | Campo/Disciplina | Preguntas | Ejemplo |
+| ---- | --- | --- | ----- | ------ |
+| $\mathbf{P(Y \vert X)}$ | Ver, Observar | Estadística, Aprendizaje Automático | *¿Qué creería sobre Y si veo X?* | ¿Cuál es el ingreso esperado de un graduado universitario en un campo dado? |
+
+## Intervenciones
+| Estimando | Actividad | Campo/Disciplina | Preguntas | Ejemplo |
+| --- | --- | --- | ----- | ------ |
+| $\mathbf{P(Y \vert do(x))}$ | Hacer, Intervenir | Experimentos, Evaluación de políticas | *¿Qué pasaría con Y si cambio X?* | ¿Cómo cambiarían los niveles de ingreso en respuesta a la expansión universitaria? |
+
+## Contrafactuales
+
+| Estimando | Actividad | Campo/Disciplina | Preguntas | Ejemplo |
+| --- | --- | --- | ----- | ------ |
+| $\mathbf{P(Y_x \vert x',y')}$ | Imaginar, Retrospección | Modelos Estructurales | *¿Qué habría pasado con Y si hubiera hecho X en lugar de X'? ¿Por qué?* | ¿Cuál habría sido el ingreso de mis padres si se hubieran graduado de la universidad, dado que no fueron?| 
+:::
+
+::: aside
+Pearl y Mackenzie (2018)
+:::
+
+
+## Pero, ¿**hacer** es *realmente* tan diferente de **ver**? 
+
+<br>
+
+![](https://imgs.xkcd.com/comics/correlation.png){width="900" fig-align="center"}
+
+:::aside
+[causalidad](https://imgs.xkcd.com/comics/correlation.png)
+:::
+
+
+# ¡Vamos a entrar en materia! {background-color="#00a191"}

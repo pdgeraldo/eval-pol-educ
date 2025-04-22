@@ -1,0 +1,899 @@
+---
+title: "Resultados potenciales para formular hipótesis, experimentos para aprender"
+author: "Pablo Geraldo Bastías"
+logo: "https://fundit.fr/sites/default/files/styles/max_650x650/public/institutions/capture-decran-2023-07-07-162216.png?itok=1CkwlJEu"
+include-in-header:
+  - text: |
+      <style>
+      .reveal .slide-logo {
+        max-height: unset;
+        height: 100px;
+      }
+      </style>
+footer: "Resultados potenciales y experimentos"
+date: 04/22/2025
+date-format: long
+format: 
+  revealjs:
+    theme: simple
+    width: 1600
+    height: 900
+    transition: slide
+    slide-number: c/t
+    chalkboard: true
+    auto-stretch: false
+callout-appearance: simple
+---
+
+# Plan de la sesión {background-color="#17a091"}
+
+\newcommand\indep{\perp\!\!\!\perp}
+\newcommand\nindep{\not\!\perp\!\!\!\perp}
+
+## De métodos causales a supuestos causales
+
+Es común escuchar la idea de que algunos *métodos* son inherentemente causales: emparejamiento por puntaje de propensión, IPW, variables instrumentales, métodos de panel, e incluso aprendizaje automático
+
+¡Pero no hay nada propiamente causal en un método (es decir, un estimador, un algoritmo, una fórmula)!
+
+Lo que hace que nuestras conclusiones sean causales son los supuestos que hacemos, cuya plausibilidad se justifica (o no) en un diseño de investigación determinado
+
+
+## De métodos causales a supuestos causales
+
+En esta primera clase, vamos a estudiar el lenguaje formal que nos permite establecer clara y transparentemente tanto nuestras cantidades de interés como nuestros supuestos
+
+Luego **veremos** este marco en acción, para entender cómo funciona en el contexto de los estudios aleatorizados
+
+Deberíamos poder entender por qué los RCTs (experimentos controlados aleatorizados) a menudo se describen como el "estándar de oro" para la inferencia causal
+
+## El Primer Mandamiento de la Inferencia Causal {background-color="#692044"}
+
+:::{.fragment}
+
+### (por Chad Hazlett)
+
+::: callout-warning
+No aplicarás ciegamente estrategias de identificación como si el *procedimiento* hiciera que tus resultados sean causales
+:::
+
+:::
+. . .
+
+Las estrategias de identificación tratan sobre supuestos, no herramientas:
+
+-   aprender herramientas es importante, útil y divertido
+
+-   pero la herramienta que usas no hace que tu resultado sea causal, tus supuestos lo hacen
+
+-   la mayor parte de tu esfuerzo debería dedicarse a entender y comunicar si tus supuestos son creíbles
+
+. . .
+
+::: callout-note
+## Corolario: Nunca digas "mi estimación es causal porque usé (.)"
+
+Donde (.) = emparejamiento, IPW, VI, RDD, DML, lo que sea
+:::
+
+
+# Resultados Potenciales {background-color="#17a091"}
+
+## Neyman, Neyman-Rubin, o Modelo Causal de Rubin (?)
+
+<br>
+
+Los resultados potenciales fueron introducidos por Neyman (1923) en el contexto del diseño experimental. ¡Siguieron usándose solo en ese contexto durante décadas!
+
+-   Importados y extendidos por Donald Rubin para estudios observacionales (c. 1974)
+
+-   Son realmente excelentes para aclarar *qué queremos saber* ([[**estimando**]()]{.fragment .fade-in})
+
+-   Esto incluye identificar *razones para las discrepancias* entre lo que observamos y nuestro estimando ([[**sesgo**]()]{.fragment .fade-in})
+
+-   Son excelentes para formalizar *qué debe ser cierto* para que nuestro estimando sea identificado con un *estimador* dado ([[**supuestos**]()]{.fragment .fade-in})
+
+. . .
+
+-   No son tan buenos para evaluar si nuestros supuestos son plausibles o defendibles (¡más sobre esto después!)
+
+------------------------------------------------------------------------
+
+## Notación
+
+Para pensar *causalmente*, necesitamos ir [más allá]{style="color:red;"} de lo que podemos observar. ¡Necesitamos hipotetizar sobre mundos posibles (*qué pasaría si*)!
+
+. . .
+
+Para hacer esto, vamos a *postular* la existencia de [resultados potenciales]{style="color:red;"}
+
+<br>
+
+Comencemos con algunas definiciones:
+
+. . .
+
+$Y$ es la variable de resultado *tal como la observamos*
+
+$D$ es la variable cuyo efecto queremos estudiar (tratamiento, exposición)
+
+$Y_d$ es el resultado potencial cuando [**fijamos**]{.fragment .highlight-red} $D=d$. Por ejemplo, cuando $D \in \{0,1\}$:
+
+-   $Y_1$ es el resultado potencial bajo "tratamiento"
+
+-   $Y_0$ es el resultado potencial bajo "control"
+
+------------------------------------------------------------------------
+
+## Notación
+
+Encontrarás muchas notaciones equivalentes para los resultados potenciales. Puede ser confuso, pero es bueno practicar con diferentes variantes
+
+$$Y(d) = Y_d = Y^d$$
+
+. . .
+
+::: callout-tip
+## Léelo así:
+
+El valor que tomaría la variable $Y$ si tuviéramos que fijar/manipular la variable $D$ al valor $d$.
+:::
+
+::: {.fragment .r-stack}
+¿Cuál es el [*problema fundamental*]{style="color:red;"} de la inferencia causal? (Holland, 1986)
+:::
+
+::: {.fragment .r-stack}
+*¿Puedes observar alguna vez alguno de esos resultados potenciales?*
+:::
+
+::: {.fragment .r-stack}
+*"La inferencia causal es un problema de datos faltantes"*
+:::
+
+## Notación
+
+**Consistencia** (también conocida como SUTVA): $$D = d \rightarrow Y = Y_d$$
+
+Para el caso de tratamiento binario, tenemos: $$Y = DY_1 + (1-D)Y_0$$ (también conocida como "ecuación de conmutación")
+
+. . .
+
+::: callout-note
+¿Cuáles son los supuestos incorporados en esta notación? ¿Qué tipo de dependencia estamos descartando?
+:::
+
+------------------------------------------------------------------------
+
+## Estimandos causales
+
+Lo primero que los resultados potenciales nos permiten hacer es formalizar los efectos causales que podríamos querer estimar.
+
+Algunos estimandos frecuentemente invocados son los siguientes: 
+
+<br>
+
+[[Efecto del tratamiento individual]{style="color:blue;"}
+$$ITE = \tau_i = Y_{1i} - Y_{0i}$$]{.fragment .fade-in}
+
+. . .
+
+* ¿Cómo podemos leer esta expresión?
+* ¿Podemos estimarla alguna vez a partir de datos?
+
+## Estimandos causales
+
+Lo primero que los resultados potenciales nos permiten hacer es formalizar los efectos causales que podríamos querer estimar.
+
+Algunos estimandos frecuentemente invocados son los siguientes: 
+
+<br>
+
+
+[Efecto promedio del tratamiento]{style="color:blue;"}
+$$
+ATE = E[\tau_i] = E[Y_{1i} - Y_{0i}]$$ $$= E[Y_{1i}] - E[Y_{0i}]
+$$
+
+. . .
+
+* ¿Cómo podemos leer esta expresión?
+* ¿Podemos estimarla alguna vez a partir de datos?
+
+## Estimandos causales
+
+Lo primero que los resultados potenciales nos permiten hacer es formalizar los efectos causales que podríamos querer estimar.
+
+Algunos estimandos frecuentemente invocados son los siguientes:
+
+<br>
+
+[Efecto promedio del tratamiento en los tratados]{style="color:blue;"}
+$$
+ATT = E[\tau_i|D_i=1] = E[Y_{1i} - Y_{0i}|D_i=1]$$ $$= E[Y_{1i}|D_i=1] - E[Y_{0i}|D_i=1]
+$$
+
+. . .
+
+* ¿Cómo podemos leer esta expresión?
+* ¿Podemos estimarla alguna vez a partir de datos?
+
+## Estimandos causales
+
+Lo primero que los resultados potenciales nos permiten hacer es formalizar los efectos causales que podríamos querer estimar.
+
+Algunos estimandos frecuentemente invocados son los siguientes:
+
+<br>
+
+
+[Efecto promedio del tratamiento en los controles]{style="color:blue;"}
+$$
+ATC = E[\tau_i|D_i=0] = E[Y_{1i} - Y_{0i}|D_i=0]$$ $$= E[Y_{1i}|D_i=0] - E[Y_{0i}|D_i=0]
+$$
+
+. . .
+
+* ¿Cómo podemos leer esta expresión?
+* ¿Podemos estimarla alguna vez a partir de datos?
+
+## Estimandos causales
+
+Lo primero que los resultados potenciales nos permiten hacer es formalizar los efectos causales que podríamos querer estimar.
+
+Algunos estimandos frecuentemente invocados son los siguientes:
+
+<br>
+
+[Efecto promedio condicional del tratamiento]{style="color:blue;"}
+$$
+CATE = E[\tau_i|X_i=x] = E[Y_{1i} - Y_{0i}|X_i=x]$$ $$= E[Y_{1i}|X_i=x] - E[Y_{0i}|X_i=x]
+$$
+
+. . .
+
+* ¿Cómo podemos leer esta expresión?
+* ¿Podemos estimarla alguna vez a partir de datos?
+
+
+
+## Comprobando intuiciones
+
+Supongamos que $D$ (la exposición) se define como "hacer las lecturas requeridas antes de la clase", y $Y$ es "entender lo que está sucediendo". Entonces,
+
+. . .
+
+$$E[Y_{1i}] = E[Y_i | D_i=1]?$$
+
+. . .
+
+* Intentemos analizarlo:
+
+  + ¿Cuál es la cantidad individual que estamos observando?
+  
+  + ¿Cuál es la población a la que nos dirigimos?
+  
+  + ¿Cómo se compararía el $Y_{1i}$ observado (para aquellos con $D_i=1$) con el $Y_{1i}$ que no ves?
+  
+  + [**¿Cuándo**]{style="color:red;"} serían equivalentes estas dos cantidades?
+  
+
+## Comprobando intuiciones
+
+Supongamos que $D$ (la exposición) se define como "hacer las lecturas requeridas antes de la clase", y $Y$ es "entender lo que está sucediendo". Entonces,
+
+
+
+$$E[Y_{1i}] = E[Y_i | D_i=1]?$$
+
+
+
+* Si asignamos $D_i$ al azar en esta sala:
+
+  + ¿Cómo se compararía el $Y_{1i}$ observado (para aquellos con $D_i=1$) con el $Y_{1i}$ que no ves?
+  
+  + ¿Qué hay del $Y_{0i}$?
+  
+  + ¿Podemos estimar $E[Y_1]$ y $E[Y_0]$?
+  
+## Comprobando intuiciones
+
+Supongamos que $D$ (la exposición) se define como "hacer las lecturas requeridas antes de la clase", y $Y$ es "entender lo que está sucediendo". Entonces,
+
+
+
+$$E[Y_{1i}] = E[Y_i | D_i=1]?$$
+
+
+
+* Supongamos que $Y_{1i} = Y_{0i}$ para todos, y puedo verlos a todos:
+
+  + ¿Qué pasa si doy $D_i=1$ con más frecuencia a aquellos con mayor $Y_1$?
+  
+  + ¿Cómo se relacionarían el $Y_1$ que ves frente al $Y_1$ que no ves?
+  
+  + ¿Qué me diría $E[Y_i|D_i=1] - E[Y_i | D_i=0]$?
+
+
+
+## Actividad breve (3 mins) {background-color="#692044"}
+
+
+Tómate un momento para pensar en tu propia investigación:
+
+-   ¿Qué pregunta **causal** es relevante para tu estudio?
+-   ¿Puedes formularla usando resultados potenciales?
+  + ¿Cuál es el contraste de interés?
+  + ¿Promediando sobre qué subpoblación?
+-   ¿Cuáles son los supuestos que estás haciendo en esta formalización?
+
+------------------------------------------------------------------------
+
+## La tabla de la ciencia
+
+```{r, echo=FALSE}
+data <- 
+  data.frame(D=c(rep("A",5),rep("B",5)),
+         Ya=c(1,0,0,1,1,1,1,0,0,1),
+         Yb=c(1,0,1,0,1,0,0,0,1,1),
+         W=c("quant","quant","qual","quant","qual",
+             "qual","quant","qual","qual","quant")) |> 
+  dplyr::mutate(Y = ifelse(D=="A",Ya,Yb))
+
+ATE <- mean(data$Ya-data$Yb)
+ATE_qual <- mean(data$Ya[data$W=="qual"]) -
+  mean(data$Yb[data$W=="qual"])
+ATE_quant <- mean(data$Ya[data$W=="quant"]) -
+  mean(data$Yb[data$W=="quant"])
+DIM <- mean(data$Y[data$D=="A"]) - mean(data$Y[data$D=="B"])
+DIM_quant <- mean(data$Y[data$D=="A" & data$W=="quant"]) - 
+  mean(data$Y[data$D=="B" & data$W=="quant"])
+DIM_qual <- mean(data$Y[data$D=="A" & data$W=="qual"]) - 
+  mean(data$Y[data$D=="B" & data$W=="qual"])
+weights_quant <- sum(data$W=="quant")/nrow(data)
+weights_qual <- sum(data$W=="qual")/nrow(data)
+DIM_w <- DIM_quant*weights_quant + DIM_qual*weights_qual
+```
+
+::: columns
+::: {.column width="50%"}
+Una ventaja de los resultados potenciales es que podemos tratarlos directamente como variables aleatorias.
+
+Así que todo lo que ya sabemos relacionado con la manipulación de probabilidades todavía se aplica aquí.
+
+El dispositivo básico de cálculo (generalmente implícito) para eso es la **tabla científica**.
+
+Básicamente, la programación completa de respuesta de los resultados potenciales bajo diferentes condiciones de tratamiento.
+:::
+
+::: {.column width="50%"}
+| Unidad | $D_i$ | $Y_i$ | $Y_{ai}$ | $Y_{bi}$ | $\tau_i$ |
+|------|-------|-------|----------|----------|----------|
+| 1    | A     | 1     | 1        | 1        | 0        |
+| 2    | A     | 0     | 0        | 0        | 0        |
+| 3    | A     | 0     | 0        | 1        | -1       |
+| 4    | A     | 1     | 1        | 0        | 1        |
+| 5    | A     | 1     | 1        | 1        | 0        |
+| 6    | B     | 0     | 1        | 0        | 1        |
+| 7    | B     | 0     | 1        | 0        | 1        |
+| 8    | B     | 0     | 0        | 0        | 0        |
+| 9    | B     | 1     | 0        | 1        | -1       |
+| 10   | B     | 1     | 1        | 1        | 0        |
+:::
+:::
+
+## Efecto Promedio del Tratamiento
+
+::: columns
+::: {.column width="50%"}
+Imaginemos que queremos comparar dos programas educativos, $a$ y $b$.
+
+Estamos interesados en el estado de empleo de sus graduados después de un año ($Y$)
+
+El efecto causal del programa sería la comparación de los resultados potenciales $Y_{ai}$ y $Y_{bi}$, para todas las unidades $i$
+
+$$\text{ATE} = E(Y_{ai}) - E(Y_{bi})$$ $$(6/10) - (5/10) = \mathbf{\color{blue}{0.1}}$$
+:::
+
+::: {.column width="50%"}
+| Unidad | $D_i$ | $Y_i$ | $Y_{ai}$ | $Y_{bi}$ | $\tau_i$ |
+|------|-------|-------|----------|----------|----------|
+| 1    | A     | 1     | 1        | 1        | 0        |
+| 2    | A     | 0     | 0        | 0        | 0        |
+| 3    | A     | 0     | 0        | 1        | -1       |
+| 4    | A     | 1     | 1        | 0        | 1        |
+| 5    | A     | 1     | 1        | 1        | 0        |
+| 6    | B     | 0     | 1        | 0        | 1        |
+| 7    | B     | 0     | 1        | 0        | 1        |
+| 8    | B     | 0     | 0        | 0        | 0        |
+| 9    | B     | 1     | 0        | 1        | -1       |
+| 10   | B     | 1     | 1        | 1        | 0        |
+:::
+:::
+
+------------------------------------------------------------------------
+
+## Diferencia de medias
+
+::: columns
+::: {.column width="50%"}
+¡Pero no observamos todos los resultados potenciales para todas las unidades!
+
+¿Podemos usar en cambio la comparación observacional como proxy?
+
+Calculemos la diferencia de medias entre grupos, basada en el programa *real* al que asistió cada sujeto:
+
+$$\text{diferencia-de-medias} = E(Y_i|X=a) - E(Y_i|X=b)$$ $$(3/5)-(2/5) = \mathbf{\color{red}{0.2}}$$
+
+$$\color{red}{\text{diferencia-de-medias} \neq \text{ATE}}$$
+
+$\color{red}{\text{¿Pero por qué???}}$
+:::
+
+::: {.column width="50%"}
+| Unidad | $D_i$ | $Y_i$ | $Y_{ai}$ | $Y_{bi}$ | $\tau_i$ |
+|------|-------|-------|----------|----------|----------|
+| 1    | A     | 1     | 1        | .        | .        |
+| 2    | A     | 0     | 0        | .        | .        |
+| 3    | A     | 0     | 0        | .        | .        |
+| 4    | A     | 1     | 1        | .        | .        |
+| 5    | A     | 1     | 1        | .        | .        |
+| 6    | B     | 0     | .        | 0        | .        |
+| 7    | B     | 0     | .        | 0        | .        |
+| 8    | B     | 0     | .        | 0        | .        |
+| 9    | B     | 1     | .        | 1        | .        |
+| 10   | B     | 1     | .        | 1        | .        |
+:::
+:::
+
+------------------------------------------------------------------------
+
+## Fuentes de sesgo
+
+::: columns
+::: {.column width="50%"}
+$$E(\text{diferencia-de-medias})$$ $$= E(Y_i|X=a) - E(Y_i|X=b)$$ $$= E(Y_a|X=a) - E(Y_b|X=b)$$ $$= ATE +$$ $$(E[Y_b|X=a] - E[Y_b|X=b])+$$ $$(1-P[X])(ATT-ATC)$$ $$= \mathbf{\color{blue}{0.1}} + \color{red}{0.2 + (0.5)(-0.2) = \mathbf{0.2}}$$
+:::
+
+::: {.column width="50%"}
+| Unidad | $D_i$ | $Y_i$ | $Y_{ai}$ | $Y_{bi}$ | $\tau_i$ |
+|------|-------|-------|----------|----------|----------|
+| 1    | A     | 1     | 1        | .        | .        |
+| 2    | A     | 0     | 0        | .        | .        |
+| 3    | A     | 0     | 0        | .        | .        |
+| 4    | A     | 1     | 1        | .        | .        |
+| 5    | A     | 1     | 1        | .        | .        |
+| 6    | B     | 0     | .        | 0        | .        |
+| 7    | B     | 0     | .        | 0        | .        |
+| 8    | B     | 0     | .        | 0        | .        |
+| 9    | B     | 1     | .        | 1        | .        |
+| 10   | B     | 1     | .        | 1        | .        |
+:::
+:::
+
+------------------------------------------------------------------------
+
+## Supuestos de identificación
+
+::: columns
+::: {.column width="50%"}
+Necesitamos que se cumpla la siguiente condición: $$
+Y_d \perp\!\!\!\perp D 
+$$
+
+¿Cumplimos esa condición aquí? ¡No! $$(Y_{ai},Y_{bi}) \not\!\perp\!\!\!\perp D$$
+
+Porque: $$P(Y_a = y | D=a) \neq P(Y_a = y)$$ $$P(Y_b = y | D=b) \neq P(Y_b = y)$$
+:::
+
+::: {.column width="50%"}
+| Unidad | $D_i$ | $Y_i$ | $Y_{ai}$ | $Y_{bi}$ | $\tau_i$ |
+|------|-------|-------|----------|----------|----------|
+| 1    | A     | 1     | 1        | 1        | 0        |
+| 2    | A     | 0     | 0        | 0        | 0        |
+| 3    | A     | 0     | 0        | 1        | -1       |
+| 4    | A     | 1     | 1        | 0        | 1        |
+| 5    | A     | 1     | 1        | 1        | 0        |
+| 6    | B     | 0     | 1        | 0        | 1        |
+| 7    | B     | 0     | 1        | 0        | 1        |
+| 8    | B     | 0     | 0        | 0        | 0        |
+| 9    | B     | 1     | 0        | 1        | -1       |
+| 10   | B     | 1     | 1        | 1        | 0        |
+:::
+:::
+
+------------------------------------------------------------------------
+
+## Supuestos de identificación
+
+::: columns
+::: {.column width="50%"}
+¿Qué tal si incluimos otra covariable $W$?
+
+¿Se cumple la siguiente condición? $$
+Y_d \perp\!\!\!\perp D | W
+$$
+
+¡Tampoco del todo! Pero sigue siendo "mejor" que antes, ¿verdad? ¿verdad?
+
+Definamos: $$\text{CATE}_{w} = E(Y_a-Y_b|W=w)$$
+
+y el estimador $\widehat{\text{CATE}}_{w} =$ $$E(Y_i|X=a,W=w) - E(Y_i|X=b,W=w)$$
+:::
+
+::: {.column width="50%"}
+| Unidad | $D_i$ | $Y_i$ | $Y_{ai}$ | $Y_{bi}$ | $\tau_i$ | $W_i$ |
+|------|-------|-------|----------|----------|----------|-------|
+| 1    | A     | 1     | 1        | 1        | 0        | Cuant |
+| 2    | A     | 0     | 0        | 0        | 0        | Cuant |
+| 3    | A     | 0     | 0        | 1        | -1       | Cual  |
+| 4    | A     | 1     | 1        | 0        | 1        | Cuant |
+| 5    | A     | 1     | 1        | 1        | 0        | Cual  |
+| 6    | B     | 0     | 1        | 0        | 1        | Cual  |
+| 7    | B     | 0     | 1        | 0        | 1        | Cuant |
+| 8    | B     | 0     | 0        | 0        | 0        | Cual  |
+| 9    | B     | 1     | 0        | 1        | -1       | Cual  |
+| 10   | B     | 1     | 1        | 1        | 0        | Cuant |
+:::
+:::
+
+------------------------------------------------------------------------
+
+## Supuestos de identificación
+
+::: columns
+::: {.column width="50%"}
+$$\widehat{\text{CATE}}_{Cuant} = \widehat{\text{CATE}}_{Cual} = 0.16$$ $$\text{ATE} = \sum_w\text{CATE}_w P(w)$$ $$\widehat{\text{ATE}} = (0.5)(0.16) + (0.5)(0.16) = 0.16$$
+
+Sin embargo, mira el verdadero $\text{ATE}_W$: $$\text{CATE}_{Cuant} = -0.2$$ $$\text{CATE}_{Cual} = 0.4$$ $$\text{ATE} = (0.5)(-0.2) + (0.5)(0.4) = \color{blue}{\mathbf{0.1}}$$
+:::
+
+::: {.column width="50%"}
+| Unidad | $D_i$ | $Y_i$ | $Y_{ai}$ | $Y_{bi}$ | $\tau_i$ | $W_i$ |
+|------|-------|-------|----------|----------|----------|-------|
+| 1    | A     | 1     | 1        | 1        | 0        | Cuant |
+| 2    | A     | 0     | 0        | 0        | 0        | Cuant |
+| 3    | A     | 0     | 0        | 1        | -1       | Cual  |
+| 4    | A     | 1     | 1        | 0        | 1        | Cuant |
+| 5    | A     | 1     | 1        | 1        | 0        | Cual  |
+| 6    | B     | 0     | 1        | 0        | 1        | Cual  |
+| 7    | B     | 0     | 1        | 0        | 1        | Cuant |
+| 8    | B     | 0     | 0        | 0        | 0        | Cual  |
+| 9    | B     | 1     | 0        | 1        | -1       | Cual  |
+| 10   | B     | 1     | 1        | 1        | 0        | Cuant |
+:::
+:::
+
+------------------------------------------------------------------------
+
+## Entonces, ¿cómo lo sabemos?
+
+::: columns
+::: {.column width="50%"}
+En general, confiamos en **supuestos extra-estadísticos** sobre el proceso de generación de datos para reclamar identificación causal.
+
+::: callout-tip
+## "Sin causas a la entrada, no hay causes a la salida"
+
+Nancy Cartwright
+:::
+
+¿Hay alguna manera de diseñar un estudio en el que sepamos, **por diseño**, que los supuestos necesarios se cumplen?
+:::
+
+::: {.column width="50%"}
+| Unidad | $D_i$ | $Y_i$ | $Y_{ai}$ | $Y_{bi}$ | $\tau_i$ | $W_i$ |
+|------|-------|-------|----------|----------|----------|-------|
+| 1    | A     | 1     | 1        | .        | .        | Cuant |
+| 2    | A     | 0     | 0        | .        | .        | Cuant |
+| 3    | A     | 0     | 0        | .        | .        | Cual  |
+| 4    | A     | 1     | 1        | .        | .        | Cuant |
+| 5    | A     | 1     | 1        | .        | .        | Cual  |
+| 6    | B     | 0     | .        | 0        | .        | Cual  |
+| 7    | B     | 0     | .        | 0        | .        | Cuant |
+| 8    | B     | 0     | .        | 0        | .        | Cual  |
+| 9    | B     | 1     | .        | 1        | .        | Cual  |
+| 10   | B     | 1     | .        | 1        | .        | Cuant |
+:::
+:::
+
+# Experimentos Aleatorizados {background-color="#17a091"}
+
+## ¿Por qué la aleatorización?
+
+<br>
+
+Si queremos [**predecir bajo intervenciones**]{style="color:blue;"}, ¡entonces la mejor manera de hacerlo es **interviniendo**!
+
+. . .
+
+La asignación aleatoria ha sido llamada el **estándar de oro** para la inferencia causal: garantiza que los supuestos necesarios para la inferencia causal se cumplan por diseño.
+
+. . .
+
+::: callout-note
+¿Cuál es la diferencia entre *asignación* aleatoria y *muestreo* aleatorio???
+:::
+
+
+## ¿Por qué la aleatorización?
+
+<br>
+
+Cuando no es factible, imaginar un experimento hipotético todavía ofrece un punto de referencia útil para evaluar la validez de las afirmaciones causales, e incluso para aclarar [qué queremos decir]{style="color:blue;"} con un efecto causal particular.
+
+Los experimentos vienen en muchos sabores diferentes: laboratorio, campo, encuesta, ¡e incluso cuasi-experimentos!
+
+Aquí solo rascaremos la superficie de los experimentos en ciencias sociales: la idea es interesarte y señalarte los recursos disponibles
+
+------------------------------------------------------------------------
+
+
+## ¿Por qué la aleatorización? Intuición
+
+Volvamos por un momento a la ecuación de conmutación introducida anteriormente: 
+
+. . .
+
+$$
+Y = DY_1 + (1-D)Y_0
+$$
+
+. . .
+
+Básicamente, la idea (algo contraintuitiva) es que:
+
+* Los resultados potenciales son fijos ($Y_1$ y $Y_0$ simplemente existen ahí fuera)
+
+* La única función del tratamiento $D$ es "revelar" uno u otro!
+
+Entonces, está claro que, [cuando $D$ se asigna aleatoriamente]{style="color:green;"}, obtenemos una muestra aleatoria tanto de $Y_1$ como de $Y_0$, ¡lo que nos permite estimar el ATE!
+
+:::aside
+No lo discutiremos aquí, pero hay formas de conceptualizar los resultados potenciales como aleatorios en lugar de fijos. Esto afecta principalmente la estimación más que la identificación
+:::
+
+
+## ¿Por qué la aleatorización?
+
+### (más formalmente)
+
+Ya dijimos que podemos identificar el efecto causal de $D$ en $Y$ si la asignación del tratamiento es independiente de los resultados potenciales. Formalmente, cuando $(Y_{d=1},Y_{d=0}) \perp\!\!\!\perp D$
+
+
+## ¿Por qué la aleatorización?
+
+### (más formalmente)
+
+Recordemos la descomposición del sesgo en la diferencia de medias que revisamos anteriormente:
+
+Por consistencia
+
+$E(Y_i|D=1) - E(Y_i|D=0) = E(Y_1|D=1) - E(Y_{0}|D=0)$
+
+Más algo de álgebra (derivación explícita en Morgan y Winship)
+
+$= E(Y_1 - Y_{0}) + (E[Y_{0}|D=1] - E[Y_{0}|D=0])+(1-P[D])(ATT-ATC)$
+
+[¡Pausa! ¿Cuál es el significado de cada término?]{.fragment .fade-in .highlight-blue}
+
+
+## ¿Por qué la aleatorización?
+
+### (más formalmente)
+
+$= E(Y_1 - Y_{0}) + (E[Y_{0}|D=1] - E[Y_{0}|D=0])+(1-P[D])(ATT-ATC)$
+
+Dada la [**ignorabilidad**]{style="color:red;"} de la asignación del tratamiento, podemos simplificarlo aún más como:
+
+$E(Y_1 - Y_{0}) = ATE$
+
+------------------------------------------------------------------------
+
+## Formas de validez
+
+<br>
+
+Tradicionalmente, los investigadores han discutido sobre la validez de la conclusión causal de un estudio (y, más generalmente, sobre la validez de diferentes diseños de investigación) basándose en los sesgos potenciales que representan **amenazas a la validez**. 
+
+Consulta [este](https://journals.lww.com/epidem/Fulltext/2020/05000/A_Graphical_Catalog_of_Threats_to_Validity_.11.aspx) increíble artículo de Matthay y Glymour para una revisión.
+
+## Formas de validez
+
+<br>
+
+Revisamos el sesgo en el estimador de diferencia de medias: diferencias de línea base (bajo la condición de control) y respuesta diferencial al tratamiento (bajo la condición de exposición).
+
+. . .
+
+Pero cuando aleatorizamos una exposición, ¡sabemos que quién termina en cada brazo de tratamiento no tiene nada que ver con sus resultados potenciales!
+
+. . .
+
+Es por eso que generalmente decimos que los experimentos son excelentes para la [validez interna]{style="color:green;"}: ¡entre las personas que participaron en nuestro estudio, podemos descartar fuentes sistemáticas de sesgo!
+
+Sin embargo, esto no implica que nuestros resultados sean [externamente válidos]{style="color:red;"}, es decir, ¡que se apliquen a personas fuera de nuestro estudio! Necesitamos supuestos adicionales para pasar de uno a otro.
+
+## Tipos de experimentos
+
+-   [**Experimentos de laboratorio**]{.fragment .highlight-blue}: Generalmente realizados con una muestra pequeña (de estudiantes de psicología de pregrado), muchas veces involucrando juegos en una computadora. Útiles para preguntas cognitivas/conductuales.
+
+-   [**Experimentos de campo**]{.fragment .highlight-blue}: Para obtener resultados más *externamente válidos*, los experimentos realizados en el campo (es decir, en condiciones del mundo real) son el camino a seguir. Definitivamente más caros, sin embargo. Los estudios de auditoría son un tipo particular de experimento de campo.
+
+-   [**Experimentos de encuesta**]{.fragment .highlight-blue}: Se puede aleatorizar las condiciones de tratamiento *en una encuesta* para evaluar cómo los participantes cambian sus respuestas basadas en ciertos estímulos. Las viñetas y los experimentos de lista son ejemplos de este enfoque.
+
+-   [**(Bonus) Cuasi-experimentos**]{.fragment .highlight-blue}: Los investigadores suelen llamar cuasi-experimentos a situaciones del mundo real que ofrecen variación como-si-aleatoria en un tratamiento de interés. Por ejemplo, terremotos, cambios en las leyes, fecha de nacimiento, etc.
+
+------------------------------------------------------------------------
+
+
+## Actividad breve (3 mins) {background-color="#692044"}
+
+A veces es difícil imaginar un experimento que sería relevante para el tipo de preguntas que nos interesan.
+
+Algunas personas incluso dicen (¡y yo seguramente estoy parcialmente de acuerdo!) que los experimentos tienden a enfatizar preguntas "pequeñas" versus "grandes", promoviendo políticas incrementales/comprobables.
+
+Sin embargo, hay toneladas de ejemplos de investigadores utilizando experimentos para abordar preguntas importantes, **grandes** y difíciles. **¿Conoces algún ejemplo?**
+
+Tómate un momento para revisar el programa del curso de Diseño Experimental del profesor Graeme Blair de UCLA [aquí](https://graemeblair.com/teaching/UCLA_PS200E_Syllabus.pdf). Él reunió una lista de experimentos realizados por profesores de UCLA y por estudiantes de posgrado.
+
+------------------------------------------------------------------------
+
+## ¿Cómo aleatorizar?
+
+<br>
+
+¡Usamos la aleatorización no solo para identificación ([**ignorabilidad**]{style="color:red;"}), sino también para estimación!
+
+Si asumimos que los resultados potenciales son fijos, y lo único que varía es el esquema de asignación de tratamiento, podemos derivar una [**distribución de permutación**]{.fragment .highlight-blue} y usarla para inferencia.
+
+## ¿Cómo aleatorizar?
+
+<br>
+
+Cuánta dispersión (es decir, incertidumbre) hay en nuestra distribución se verá afectada por [**el nivel**]{style="color:blue;"} al que ocurre la aleatorización (o, más precisamente, el tratamiento): ¿es a nivel individual? ¿o a nivel de grupo/cluster?
+
+::: callout-note
+Cuanto mayor es la agregación, mayor es la incertidumbre. Entonces, ¿por qué querríamos aleatorizar a nivel de cluster?
+:::
+
+## ¿Cómo aleatorizar?
+
+<br>
+
+La aleatorización condicional (es decir, por bloques) aumenta la eficiencia, cuando tenemos variables que son altamente predictivas del resultado de interés
+
+::: callout-note
+Un extremo de esto es la aleatorización en pares emparejados: para cada par de individuos con covariables similares, asignamos aleatoriamente uno al tratamiento y otro al control
+:::
+
+## Bloqueo
+
+<br>
+
+Similar a la intuición para el muestreo aleatorio *estratificado* en el contexto de encuestas, el bloqueo puede aumentar la precisión en el diseño experimental
+
+Las ganancias de precisión son similares a aumentar el tamaño de la muestra
+
+* Recopila información de fondo sobre covariables relevantes *para el resultado*
+
+* Pre-estratifica tu muestra, luego aleatoriza dentro de los bloques
+
+  + Esto asegura que, con respecto a los factores bloqueados, ambos brazos de tratamiento sean idénticos
+  
+  + Es esencialmente lo mismo que ejecutar un experimento separado en cada estrato
+  
+  
+## Bloqueo 
+
+<br>
+
+Para la estimación, obtén efectos específicos por bloque y promedia según las proporciones de la población. Con $J$ estratos:
+
+$
+\tau_{\text{block}} = \sum_{j=1}^{J} \frac{N_j}{N} \tau_j
+$
+con varianza: 
+
+$V(\tau_{\text{block}}) = \sum_{j=1}^{J} \Big(\frac{N_j}{N}\Big)^2 V(\tau_j)$
+
+:::aside
+¿Cuándo sería esto igual a una regresión con efectos fijos por bloque?
+:::
+
+## ¿Cómo estimar?
+
+<br>
+
+¡Una vez que tenemos asignación aleatoria, la estimación es super fácil!
+
+Lo único que importa es que tu procedimiento de estimación siga tu regla de asignación (conocida)
+
+:::{.callout-warning}
+## En otras palabras: ¡Estima como aleatorizas!
+:::
+
+. . . 
+
+* Una simple diferencia de medias recuperará el ATE
+
+* Esto es equivalente a ejecutar una regresión bivariada (sin controles)
+
+* Con controles es un poco más complicado (ver [Freedman 2008](https://projecteuclid.org/journals/annals-of-applied-statistics/volume-2/issue-1/On-regression-adjustments-in-experiments-withseveral-treatments/10.1214/07-AOAS143.full) y [Lin 2013](https://projecteuclid.org/journals/annals-of-applied-statistics/volume-7/issue-1/Agnostic-notes-on-regression-adjustments-to-experimental-data--Reexamining/10.1214/12-AOAS583.full)), ¡pero más útil (mayor precisión)!
+
+* ¡Tus errores estándar dependen de tu esquema de aleatorización! 
+  + ¿la asignación es a nivel individual?
+  + ¿las probabilidades varían por bloque?
+  + ¿la aleatorización se realiza entre clusters?
+
+## Balance de covariables
+
+<br>
+
+Cuando aleatorizas el tratamiento, las variables pre-tratamiento estarán (en expectativa) equilibradas entre los brazos de tratamiento
+
+Esto es generalmente una forma de "verificar" si el paso de aleatorización funcionó correctamente
+
+Sin embargo, uno debe tener cuidado de no descartar realizaciones "desafortunadas" de manera arbitraria
+
+. . .
+
+También, nota que el desequilibrio [**no**]{style="color:red;"} implica sesgo: ¡los errores estándar estimados correctamente tendrán en cuenta la incertidumbre en el efecto del tratamiento!
+
+* Consulta esta gran serie de Senn: [blog](https://errorstatistics.com/2020/04/20/s-senn-randomisation-is-not-about-balance-nor-about-homogeneity-but-about-randomness-guest-post/), [diapositivas](https://www.ideal.rwth-aachen.de/wp-content/uploads/2014/02/Senn_Randomisation.pdf), [artículo](https://onlinelibrary.wiley.com/doi/full/10.1002/sim.5713)
+
+
+## Problemas potenciales
+
+<br>
+
+¡En el mundo aleatorio, todo es perfecto!
+
+Sin embargo, muchas cosas pueden salir mal en la práctica, amenazando la *validez interna*:
+
+* [**Fallo en la aleatorización**]{.fragment .highlight-blue}: por alguna razón, el procedimiento físico de asignación falla en ser aleatorio (ver la lotería de reclutamiento de Vietnam)
+
+* [**Incumplimiento**]{.fragment .highlight-blue}: muchas veces, los participantes no cumplen con su estado de tratamiento asignado (incumplimiento unilateral o bilateral)
+
+* [**Desgaste y pérdida de seguimiento**]{.fragment .highlight-blue}: incluso si la aleatorización se realiza correctamente y todos adhieren al tratamiento, ¡podemos perder diferencialmente a los participantes en el período post-tratamiento!
+
+## Problemas potenciales
+
+![](https://imgs.xkcd.com/comics/research_ethics.png)
+
+:::aside
+[xkcd ética](https://imgs.xkcd.com/comics/research_ethics.png)
+
+[Caso Lacour](https://en.wikipedia.org/wiki/When_Contact_Changes_Minds)
+:::
+
+
+------------------------------------------------------------------------
+
+## Recursos adicionales
+
+### Aprendizaje en línea
+
+
+
+-   Recursos de investigación de J-PAL [aquí](https://www.povertyactionlab.org/research-resources?view=toc)
+
+-   Guías de métodos de EGAP [aquí](https://egap.org/methods-guides/)
+
+
+
+------------------------------------------------------------------------
+
+## Actividad breve {background-color="#692044"}
+
+Piensa en una pregunta de investigación que posiblemente podrías abordar utilizando un diseño experimental:
+
+-   ¿Cuál es tu pregunta de investigación?
+
+-   ¿Cuál es tu **estimando**? (¿efecto de qué? ¿sobre qué? ¿entre quiénes?)
+
+-   ¿Qué tipo de experimento realizarías? (¿laboratorio? ¿campo? ¿encuesta?)
+
+-   ¿Cuál sería el nivel de tu aleatorización? (¿individual? ¿cluster? ¿por qué?)
+
+- ¿Qué consideraciones éticas deberías tener en cuenta para que tu experimento sea aceptable?
