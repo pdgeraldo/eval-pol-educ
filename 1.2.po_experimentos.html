@@ -623,8 +623,8 @@ CATE = E[\tau_i|X_i=x] = E[Y_{1i} - Y_{0i}|X_i=x]\]</span> <span class="math dis
 <div class="column" style="width:50%;">
 <p>Una ventaja de los resultados potenciales es que podemos tratarlos directamente como variables aleatorias.</p>
 <p>Así que todo lo que ya sabemos relacionado con la manipulación de probabilidades todavía se aplica aquí.</p>
-<p>El dispositivo básico de cálculo (generalmente implícito) para eso es la <strong>tabla científica</strong>.</p>
-<p>Básicamente, la programación completa de respuesta de los resultados potenciales bajo diferentes condiciones de tratamiento.</p>
+<p>El dispositivo básico de cálculo (generalmente implícito) para eso es la <strong>tabla de la ciencia</strong>.</p>
+<p>Básicamente, el esquema completo de respuesta de los resultados potenciales bajo diferentes condiciones de tratamiento.</p>
 </div><div class="column" style="width:50%;">
 <table class="caption-top">
 <thead>
@@ -834,8 +834,8 @@ CATE = E[\tau_i|X_i=x] = E[Y_{1i} - Y_{0i}|X_i=x]\]</span> <span class="math dis
 <p>¡Pero no observamos todos los resultados potenciales para todas las unidades!</p>
 <p>¿Podemos usar en cambio la comparación observacional como proxy?</p>
 <p>Calculemos la diferencia de medias entre grupos, basada en el programa <em>real</em> al que asistió cada sujeto:</p>
-<p><span class="math display">\[\text{diferencia-de-medias} = E(Y_i|X=a) - E(Y_i|X=b)\]</span> <span class="math display">\[(3/5)-(2/5) = \mathbf{\color{red}{0.2}}\]</span></p>
-<p><span class="math display">\[\color{red}{\text{diferencia-de-medias} \neq \text{ATE}}\]</span></p>
+<p><span class="math display">\[\Delta\text{medias} = E(Y_i|X=a) - E(Y_i|X=b)\]</span> <span class="math display">\[(3/5)-(2/5) = \mathbf{\color{red}{0.2}}\]</span></p>
+<p><span class="math display">\[\color{red}{\Delta\text{medias} \neq \text{ATE}}\]</span></p>
 <p><span class="math inline">\(\color{red}{\text{¿Pero por qué???}}\)</span></p>
 </div><div class="column" style="width:50%;">
 <table class="caption-top">
@@ -938,7 +938,7 @@ CATE = E[\tau_i|X_i=x] = E[Y_{1i} - Y_{0i}|X_i=x]\]</span> <span class="math dis
 <h2>Fuentes de sesgo</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<p><span class="math display">\[E(\text{diferencia-de-medias})\]</span> <span class="math display">\[= E(Y_i|X=a) - E(Y_i|X=b)\]</span> <span class="math display">\[= E(Y_a|X=a) - E(Y_b|X=b)\]</span> <span class="math display">\[= ATE +\]</span> <span class="math display">\[(E[Y_b|X=a] - E[Y_b|X=b])+\]</span> <span class="math display">\[(1-P[X])(ATT-ATC)\]</span> <span class="math display">\[= \mathbf{\color{blue}{0.1}} + \color{red}{0.2 + (0.5)(-0.2) = \mathbf{0.2}}\]</span></p>
+<p><span class="math display">\[E(\Delta\text{medias})\]</span> <span class="math display">\[= E(Y_i|X=a) - E(Y_i|X=b)\]</span> <span class="math display">\[= E(Y_a|X=a) - E(Y_b|X=b)\]</span> <span class="math display">\[= ATE +\]</span> <span class="math display">\[(E[Y_b|X=a] - E[Y_b|X=b])+\]</span> <span class="math display">\[(1-P[X])(ATT-ATC)\]</span> <span class="math display">\[= \mathbf{\color{blue}{0.1}} + \color{red}{0.2 + (0.5)(-0.2) = \mathbf{0.2}}\]</span></p>
 </div><div class="column" style="width:50%;">
 <table class="caption-top">
 <thead>
@@ -1646,8 +1646,8 @@ Y = DY_1 + (1-D)Y_0
 </div>
 </div>
 </section>
-<section id="bloqueo" class="slide level2">
-<h2>Bloqueo</h2>
+<section id="bloques" class="slide level2">
+<h2>Bloques</h2>
 <p><br></p>
 <p>Similar a la intuición para el muestreo aleatorio <em>estratificado</em> en el contexto de encuestas, el bloqueo puede aumentar la precisión en el diseño experimental</p>
 <p>Las ganancias de precisión son similares a aumentar el tamaño de la muestra</p>
@@ -1660,11 +1660,13 @@ Y = DY_1 + (1-D)Y_0
 </ul></li>
 </ul>
 </section>
-<section id="bloqueo-1" class="slide level2">
-<h2>Bloqueo</h2>
+<section id="bloques-1" class="slide level2">
+<h2>Bloques</h2>
 <p><br></p>
 <p>Para la estimación, obtén efectos específicos por bloque y promedia según las proporciones de la población. Con <span class="math inline">\(J\)</span> estratos:</p>
-<p>$ <em>{} = </em>{j=1}^{J} _j $ con varianza:</p>
+<p><span class="math display">\[
+\tau_{\text{block}} = \sum_{j=1}^{J} \frac{N_j}{N} \tau_j
+\]</span> con varianza:</p>
 <p><span class="math inline">\(V(\tau_{\text{block}}) = \sum_{j=1}^{J} \Big(\frac{N_j}{N}\Big)^2 V(\tau_j)\)</span></p>
 
 <aside><div>
@@ -1672,9 +1674,7 @@ Y = DY_1 + (1-D)Y_0
 </div></aside></section>
 <section id="cómo-estimar" class="slide level2">
 <h2>¿Cómo estimar?</h2>
-<p><br></p>
-<p>¡Una vez que tenemos asignación aleatoria, la estimación es super fácil!</p>
-<p>Lo único que importa es que tu procedimiento de estimación siga tu regla de asignación (conocida)</p>
+<p>Una vez que tenemos asignación aleatoria, la estimación es sencilla. Lo único que importa es que tu procedimiento de estimación siga tu regla de asignación (conocida)</p>
 <div class="callout callout-warning callout-titled callout-style-simple">
 <div class="callout-body">
 <div class="callout-title">

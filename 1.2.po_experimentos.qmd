@@ -361,9 +361,9 @@ Una ventaja de los resultados potenciales es que podemos tratarlos directamente 
 
 Así que todo lo que ya sabemos relacionado con la manipulación de probabilidades todavía se aplica aquí.
 
-El dispositivo básico de cálculo (generalmente implícito) para eso es la **tabla científica**.
+El dispositivo básico de cálculo (generalmente implícito) para eso es la **tabla de la ciencia**.
 
-Básicamente, la programación completa de respuesta de los resultados potenciales bajo diferentes condiciones de tratamiento.
+Básicamente, el esquema completo de respuesta de los resultados potenciales bajo diferentes condiciones de tratamiento.
 :::
 
 ::: {.column width="50%"}
@@ -423,9 +423,9 @@ $$\text{ATE} = E(Y_{ai}) - E(Y_{bi})$$ $$(6/10) - (5/10) = \mathbf{\color{blue}{
 
 Calculemos la diferencia de medias entre grupos, basada en el programa *real* al que asistió cada sujeto:
 
-$$\text{diferencia-de-medias} = E(Y_i|X=a) - E(Y_i|X=b)$$ $$(3/5)-(2/5) = \mathbf{\color{red}{0.2}}$$
+$$\Delta\text{medias} = E(Y_i|X=a) - E(Y_i|X=b)$$ $$(3/5)-(2/5) = \mathbf{\color{red}{0.2}}$$
 
-$$\color{red}{\text{diferencia-de-medias} \neq \text{ATE}}$$
+$$\color{red}{\Delta\text{medias} \neq \text{ATE}}$$
 
 $\color{red}{\text{¿Pero por qué???}}$
 :::
@@ -452,7 +452,7 @@ $\color{red}{\text{¿Pero por qué???}}$
 
 ::: columns
 ::: {.column width="50%"}
-$$E(\text{diferencia-de-medias})$$ $$= E(Y_i|X=a) - E(Y_i|X=b)$$ $$= E(Y_a|X=a) - E(Y_b|X=b)$$ $$= ATE +$$ $$(E[Y_b|X=a] - E[Y_b|X=b])+$$ $$(1-P[X])(ATT-ATC)$$ $$= \mathbf{\color{blue}{0.1}} + \color{red}{0.2 + (0.5)(-0.2) = \mathbf{0.2}}$$
+$$E(\Delta\text{medias})$$ $$= E(Y_i|X=a) - E(Y_i|X=b)$$ $$= E(Y_a|X=a) - E(Y_b|X=b)$$ $$= ATE +$$ $$(E[Y_b|X=a] - E[Y_b|X=b])+$$ $$(1-P[X])(ATT-ATC)$$ $$= \mathbf{\color{blue}{0.1}} + \color{red}{0.2 + (0.5)(-0.2) = \mathbf{0.2}}$$
 :::
 
 ::: {.column width="50%"}
@@ -767,7 +767,7 @@ La aleatorización condicional (es decir, por bloques) aumenta la eficiencia, cu
 Un extremo de esto es la aleatorización en pares emparejados: para cada par de individuos con covariables similares, asignamos aleatoriamente uno al tratamiento y otro al control
 :::
 
-## Bloqueo
+## Bloques
 
 <br>
 
@@ -784,15 +784,15 @@ Las ganancias de precisión son similares a aumentar el tamaño de la muestra
   + Es esencialmente lo mismo que ejecutar un experimento separado en cada estrato
   
   
-## Bloqueo 
+## Bloques 
 
 <br>
 
 Para la estimación, obtén efectos específicos por bloque y promedia según las proporciones de la población. Con $J$ estratos:
 
-$
+$$
 \tau_{\text{block}} = \sum_{j=1}^{J} \frac{N_j}{N} \tau_j
-$
+$$
 con varianza: 
 
 $V(\tau_{\text{block}}) = \sum_{j=1}^{J} \Big(\frac{N_j}{N}\Big)^2 V(\tau_j)$
@@ -803,11 +803,7 @@ $V(\tau_{\text{block}}) = \sum_{j=1}^{J} \Big(\frac{N_j}{N}\Big)^2 V(\tau_j)$
 
 ## ¿Cómo estimar?
 
-<br>
-
-¡Una vez que tenemos asignación aleatoria, la estimación es super fácil!
-
-Lo único que importa es que tu procedimiento de estimación siga tu regla de asignación (conocida)
+Una vez que tenemos asignación aleatoria, la estimación es sencilla. Lo único que importa es que tu procedimiento de estimación siga tu regla de asignación (conocida)
 
 :::{.callout-warning}
 ## En otras palabras: ¡Estima como aleatorizas!

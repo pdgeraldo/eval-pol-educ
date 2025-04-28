@@ -1,0 +1,592 @@
+---
+title: "Variables Omitidas"
+author: "Pablo Geraldo Bastías"
+logo: "https://fundit.fr/sites/default/files/styles/max_650x650/public/institutions/capture-decran-2023-07-07-162216.png?itok=1CkwlJEu"
+include-in-header:
+  - text: |
+      <style>
+      .reveal .slide-logo {
+        max-height: unset;
+        height: 80px;
+      }
+      </style>
+footer: "OVB - Una introducción mínima"
+date: 04/24/2025
+date-format: long
+format: 
+  revealjs:
+    theme: simple
+    width: 1600
+    height: 900
+    transition: slide
+    slide-number: c/t
+    chalkboard: true
+    auto-stretch: false
+callout-appearance: minimal
+---
+
+
+## ¡El OVB está en todas partes! 
+
+:::{.r-stack}
+
+![](img/ovb_greta_effect.png){.fragment}
+
+![](img/ovb_mortality_museums.png){.fragment}
+
+![](img/ovb_walking.jpg){.fragment}
+
+![](img/ovb_opioids.jpg){.fragment width="750"}
+
+:::
+
+
+# La anatomía del OVB {background-color="#00a191"}
+
+## Un ejemplo familiar
+
+Supongamos que queremos estimar el efecto causal de tener un título universitario ($X$) sobre los ingresos ($Y$), y tenemos datos observacionales sobre estas variables.
+
+La asociación incondicional entre $X$ e $Y$ no es el verdadero efecto causal, ya que está *sesgada* (o [*confundida*]{.fragment .highlight-red}) por otras variables $W$ tales que:
+
+  - Afectan quién obtiene un título universitario ($W \rightarrow X$), y
+  
+  - Afectan los ingresos de los individuos ($W \rightarrow Y$)
+  
+  
+Ejemplos comunes de tales variables en la literatura son el entorno familiar y la habilidad.
+
+El problema del sesgo por variables omitidas surge cuando [*no conocemos*]{.fragment .highlight-red} las $W$ apropiadas, o conociéndolas, no las hemos [*medido*]{.fragment .highlight-red}.
+
+<br>
+
+:::{.fragment .highlight-blue}
+
+***¿Cuándo no es un problema omitir variables?***
+
+El OVB es un concepto *causal*. ¡Si te interesan las asociaciones o predicciones, entonces no es un problema!
+
+:::
+
+
+## Estructura del OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {.left style="margin-top: 200px;"}
+$$Y_i \color{white}{=  \alpha + {\beta} X_i + \gamma W_i + \epsilon_i}$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yonly.svg)
+
+:::
+
+:::
+
+
+
+## OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 200px;"}
+$$Y_i =  \alpha \color{white}{+ {\beta} X_i + \gamma W_i + \epsilon_i}$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yonly.svg)
+
+:::
+
+:::
+
+
+
+
+## OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 200px;"}
+$$Y_i =  \alpha + \color{blue}{\beta} X_i \color{white}{+ \gamma W_i + \epsilon_i}$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yx_beta.svg)
+:::
+
+:::
+
+
+## OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 200px;"}
+$$Y_i =  \alpha + \beta X_i \color{white}{+ \gamma W_i + \epsilon_i}$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxw_beta.svg)
+:::
+
+:::
+
+
+
+
+
+
+## OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 200px;"}
+$$Y_i =  \alpha + \beta X_i + \color{red}{\gamma} W_i \color{white}{+ \epsilon_i}$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxw_gamma.svg)
+:::
+
+:::
+
+
+
+## OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 200px;"}
+$$Y_i =  \alpha + \beta X_i + \color{red}{\gamma} W_i \color{white}{+ \epsilon_i}$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxw_block.svg)
+:::
+
+:::
+
+
+
+
+## OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 200px;"}
+$$Y_i =  \alpha + \beta X_i + \color{red}{\gamma} W_i \color{white}{+ \epsilon_i}$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxw_block2.svg)
+:::
+
+:::
+
+
+
+## OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 200px;"}
+$$Y_i =  \alpha + {\beta} X_i + \gamma W_i + \epsilon_i$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxwe_beta.svg)
+
+
+:::
+
+:::
+
+::: {.fragment}
+$\text{corr}(X_i; \epsilon_i) = 0$
+:::
+
+:::{.fragment}
+$X \rightarrow \dots \leftarrow \epsilon$ está $d-$separado
+:::
+
+
+
+
+
+## OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 100px;"}
+$$\color{grey}{Y_i =  \alpha + \beta X_i + \gamma W_i + \epsilon_i}$$
+
+$$Y_i =  \zeta + \tilde{\beta} X_i + u_i$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxu_tilde.svg)
+:::
+
+:::
+
+
+
+
+
+
+## OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 100px;"}
+$$\color{grey}{Y_i =  \alpha + \beta X_i +  \color{red}{\gamma W_i + \epsilon_i}}$$
+
+$$Y_i =  \zeta + \tilde{\beta} X_i + \color{red}{u_i}$$
+
+
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxu2_tilde.svg)
+:::
+
+:::
+
+
+:::{.fragment}
+$\text{corr}(X_i ; u_i) \neq 0$
+:::
+
+:::{.fragment}
+$X \rightarrow u$ está $d-$conectado
+:::
+
+
+
+
+## La fórmula del OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 100px;"}
+$$\color{grey}{Y_i =  \zeta + \color{red}{\tilde{\beta}} X_i + u_i}$$
+
+$$
+\color{red}{\tilde{\beta}} = \frac{\text{Cov}(X_i , Y_i)}{\text{Var}(X_i)}
+$$
+
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxu2.svg)
+:::
+
+:::
+
+
+
+
+
+
+## La fórmula del OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 100px;"}
+$$\color{grey}{Y_i =  \zeta + \tilde{\beta} X_i + u_i}$$
+
+$$
+\tilde{\beta} = \frac{\text{Cov}(X_i , \color{green}{Y_i})}{\text{Var}(X_i)}
+$$
+
+$$
+= \frac{\text{Cov}(X_i, \color{green}{\alpha + \beta X_i + \gamma W_i + \epsilon_i})}{\text{Var}(X_i)}
+$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxu2.svg)
+:::
+
+:::
+
+
+
+
+
+## La fórmula del OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 100px;"}
+$$\color{grey}{Y_i =  \zeta + \tilde{\beta} X_i + u_i}$$
+
+$$
+\tilde{\beta} = \frac{\text{Cov}(X_i , Y_i)}{\text{Var}(X_i)}
+$$
+
+$$
+= \frac{\color{green}{\text{Cov}(X_i}, \alpha + \color{blue}{\beta} X_i + \color{red}{\gamma} \color{green}{W_i} + \epsilon_i)}{\color{green}{\text{Var}(X_i)}}
+$$
+
+$$
+= \color{blue}{\beta} + \underbrace{\color{red}{\gamma} \times \color{green}{\frac{\text{Cov}(X_i,W_i)}{\text{Var}(X_i)}}}_{\text{Sesgo}}
+$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxu2.svg)
+:::
+
+:::
+
+
+
+
+## La fórmula del OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 100px;"}
+$$\color{grey}{Y_i =  \zeta + \color{red}{\tilde{\beta}} X_i + u_i}$$
+
+$$
+\tilde{\beta} = \frac{\text{Cov}(X_i , Y_i)}{\text{Var}(X_i)}
+$$
+
+$$
+= \frac{\text{Cov}(X_i, \alpha + \beta X_i + \gamma W_i + \epsilon_i)}{\text{Var}(X_i)}
+$$
+
+$$
+= \color{blue}{\beta} + \underbrace{\color{red}{\gamma}}_{\text{Impacto}} \times \underbrace{\color{green}{\delta}}_{\text{Desequilibrio}}
+$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxu2.svg)
+:::
+
+:::
+
+
+
+
+## La fórmula del OVB {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="50%"}
+***Regresión***
+
+::: {style="margin-top: 100px;"}
+$$\color{grey}{Y_i =  \zeta + \color{red}{\tilde{\beta}} X_i + u_i}$$
+
+$$
+\tilde{\beta} = \frac{\text{Cov}(X_i , Y_i)}{\text{Var}(X_i)}
+$$
+
+$$
+= \frac{\text{Cov}(X_i, \alpha + \beta X_i + \gamma W_i + \epsilon_i)}{\text{Var}(X_i)}
+$$
+
+$$
+= \color{blue}{\beta} + \underbrace{\color{red}{\gamma}}_{\text{Impacto}} \times \underbrace{\color{green}{\delta}}_{\text{Desequilibrio}}
+$$
+:::
+
+
+:::
+
+::: {.column width="50%"}
+***Diagrama de ruta***
+
+![](img/dag_yxw_delta.svg)
+:::
+
+:::
+
+
+
+# ¿Qué hacer? {background-color="#00a191"}
+
+## Respuesta errónea
+### ¡Incluir todo lo que tengas!
+
+![](img/ovb_authors.jpg){.center}
+
+## Tratar con el desequilibrio ($\delta$) *por diseño*
+
+:::{.r-stack}
+
+:::{.fragment}
+**ECAs**: Un enfoque ideal sería asignar aleatoriamente quién recibe el tratamiento de interés y quién no. Esto rompe el vínculo $W \rightarrow X$
+
+**Cuasi-Exp**: A veces, es posible encontrar un evento o subpoblación en la que el tratamiento es *casi aleatorio*. En teoría, esto también debería lidiar con $\delta$
+
+![](img/ovb_iv.svg){.fragment .center}
+:::
+
+
+![](img/ovb_rct.png){.fragment .center}
+
+:::
+
+## Calibración y sensibilidad
+
+En lugar de suponer que no hay OVB, podemos intentar acotar el efecto estimado del tratamiento bajo supuestos plausibles sobre su magnitud
+
+:::{.r-stack}
+
+:::{.fragment}
+**Límites del peor caso:** Suponer una $W$ que predice perfectamente $Y$ (el $\gamma$ más fuerte posible), y preguntar cuánto debería ser el desequilibrio ($\delta$) para cambiar nuestras conclusiones
+  
+**Simular:** Usar una gama de valores $\gamma \times \delta$ para simular cómo cambiarían los resultados para diferentes valores de OVB
+
+**Calibrar:** Usar variables incluidas para calibrar la magnitud de los posibles factores excluidos
+:::
+
+![](img/ovb_cinelli_hazlett.png){.fragment .center}
+
+:::
+
+## Resumen y más allá: ¿Cuándo es un problema el OVB?
+
+* Pregúntate si estás tratando de obtener una relación causal
+
+  - Define tu tratamiento con suficiente detalle para que puedas preguntar, [*qué factores que afectan tanto al resultado como a quién recibe el tratamiento*]{.fragment .highlight-blue} pueden faltar
+  
+  - El sesgo siempre es [*relativo a una cantidad objetivo*]{.fragment .highlight-blue}
+
+
+* Recuerda: ¡siempre hay omisión, pero no siempre es un problema!
+  
+  - **Resultado**: pérdida de eficiencia, pero no necesariamente sesgo
+  
+  - **Relacionado con el tratamiento**: incluso puede ser mejor (amplificación del sesgo)
+  
+  - [¿Ambos? ¡Zona de peligro!]{.fragment .highlight-red}
+
+* ¡Sesgo *relativo* a una cantidad objetivo!
+
+
+## {.center}
+
+![](https://imgs.xkcd.com/comics/confounding_variables.png){width="1500"}
+
+
+# {background-color="#00a191"}

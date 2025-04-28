@@ -1,0 +1,216 @@
+---
+title: "Estrategias de identificación como recetas"
+author: "Pablo Geraldo Bastías"
+logo: "https://fundit.fr/sites/default/files/styles/max_650x650/public/institutions/capture-decran-2023-07-07-162216.png?itok=1CkwlJEu"
+include-in-header:
+  - text: |
+      <style>
+      .reveal .slide-logo {
+        max-height: unset;
+        height: 100px;
+      }
+      </style>
+footer: "Recetas"
+date: 04/24/2025
+date-format: long
+format: 
+  revealjs:
+    theme: simple
+    width: 1600
+    height: 900
+    transition: slide
+    slide-number: c/t
+    chalkboard: true
+    auto-stretch: false
+callout-appearance: simple
+---
+
+# Estrategias de identificación {background-color="#00a191"}
+
+\newcommand\indep{\perp\!\!\!\perp}
+\newcommand\nindep{\not\!\perp\!\!\!\perp}
+
+## Estrategias de identificación: un breve recorrido
+
+Las estrategias de identificación son conjuntos bien conocidos de supuestos que son suficientes para la interpretación causal de ciertos estimadores:
+
+:::{.callout-tip}
+## Imbens (2019)
+*En parte como resultado del enfoque en ejemplos empíricos, la literatura econométrica ha desarrollado un pequeño número de escenarios canónicos donde los investigadores ven los modelos causales específicos y los métodos estadísticos asociados como bien establecidos y comprendidos. Estos modelos causales corresponden a lo que hoy en día a menudo se conoce como* estrategias de identificación
+:::
+
+
+---
+
+## Estrategias de identificación: un breve recorrido
+
+:::{.panel-tabset}
+
+## RCTs
+
+:::{.columns}
+
+:::{.column width=40%}
+![](img/id_random.png)
+:::
+
+:::{.column width=60%}
+
+**Estimando**: $E[Y_{1i}-Y_{0i}]$ 
+
+**Independencias implicadas**:  $Y_d \indep D$ 
+
+**Supuestos paramétricos**:  No 
+
+**Estimador**:  $\hat{E}[Y|D=1] - \hat{E}[Y|D=0]$
+:::
+
+:::
+
+La **aleatorización** asegura que los resultados potenciales sean independientes del tratamiento en los experimentos. Esto justifica una interpretación causal de un estimador de diferencia de medias.
+
+## RDD_lr
+
+:::{.columns}
+
+:::{.column width=40%}
+![](img/id_rdd_LR.png)
+:::
+
+:::{.column width=60%}
+
+**Estimando**: $E[Y_{1i}-Y_{0i}|Z=c]$
+
+**Independencias implicadas**: $Y_d \indep D \vert \{Z = c \pm \epsilon\}$
+
+**Supuestos paramétricos**: No
+
+**Estimador**:  $\hat{E}[Y|c \leq Z \leq c+\epsilon] -  \hat{E}[Y |c > Z \geq c-\epsilon]$ 
+:::
+
+:::
+
+## RDD_cpo
+
+
+:::{.columns}
+
+:::{.column width=40%}
+![](img/id_rdd_Cont.png)
+
+:::
+
+:::{.column width=60%}
+
+**Estimando**: $E[Y_{1i}-Y_{0i}|Z=c]$ 
+
+**Independencias implicadas**: No
+
+**Supuestos paramétricos**: $E[Y_d|Z=c] = \lim_{z\rightarrow c}E[Y_d|Z=z]$
+
+**Estimador**:  $\hat{E}[Y|c \leq Z \leq c+\epsilon, Z] - \hat{E}[Y |c > Z \geq c-\epsilon, Z]$
+
+
+:::
+
+:::
+
+## IV 
+
+:::{.columns}
+
+:::{.column width=40%}
+![](img/id_iv.png)
+
+:::
+
+:::{.column width=60%}
+
+**Estimando**: $E[Y_{1i}-Y_{0i}|D_{z=1}=1,D_{z=0}=0]$
+
+**Independencias implicadas**: $Y_{z,d} = Y_d$,  $\{Y_{z,d}, D_z\} \indep Z$
+
+**Supuestos paramétricos**: $P[D_{z,i}=1] \geq P[D_{z',i}=1] \forall i, z>z'$
+
+**Estimador**:  $\hat{E}[Y|Z=1]-\hat{E}[Y|Z=0]/\hat{E}[D|Z=1]-\hat{E}[D|Z=0]$
+
+
+:::
+
+:::
+
+
+## SOO
+
+
+:::{.columns}
+
+:::{.column width=40%}
+![](img/confounder1.png)
+
+:::
+
+:::{.column width=60%}
+
+**Estimando**: $E[Y_{1i}-Y_{0i}|D=1]$
+
+**Independencias implicadas**: $Y_d \indep D | X$, $Y_d \indep D | e(X)$
+
+**Supuestos paramétricos**: No
+
+**Estimador**: $\hat{E}_x(\hat{E}[Y|D=1,X=x]-\hat{E}[Y|D=0,X=x])$
+
+:::
+
+:::
+
+:::
+
+
+## ¿Existe una jerarquía de estrategias de identificación?
+
+En general, se asume que cuanto más fuertes son los supuestos, menos creíble sería una estrategia de identificación
+
+Preferiríamos experimentos (el llamado *estándar de oro*) y, en ausencia de experimentos, preferiríamos estrategias en las que nuestros supuestos se cumplan **por diseño**
+
+Los diseños en los que hay una fuente de variación **exógena** en el estado del tratamiento (como VI, RDD, cuasi-experimentos en general) se consideran más plausibles
+
+Sin embargo, ¿existe una jerarquía natural de estrategias de identificación que pueda decirnos, *a priori*, qué supuestos son más creíbles en aplicaciones empíricas?
+
+¿Las aplicaciones empíricas corresponden a las etiquetas que usamos para describir un diseño de investigación determinado? ¿Alguna reflexión?
+
+
+---
+
+## Debates en la investigación aplicada
+
+. . . 
+
+:::{.callout-tip}
+## B. G. Cochran (citado en Rosenbaum, 1995)
+*Hace unos 20 años, cuando se le preguntó en una reunión qué se puede hacer en estudios observacionales para aclarar el paso de la asociación a la causalidad, Sir Ronald Fisher respondió: 'Haga que sus teorías sean elaboradas'. La respuesta me desconcertó al principio, ya que según la navaja de Occam, el consejo que se suele dar es hacer las teorías tan simples como sea consistente con los datos conocidos. Lo que Sir Ronald quiso decir, como mostró la discusión posterior, fue que al construir una hipótesis causal uno debería prever tantas consecuencias diferentes de su verdad como sea posible, y planificar estudios observacionales para descubrir si cada una de estas se cumple.*
+:::
+
+. . .
+
+:::{.callout-tip}
+## Jason Abaluck (citado en Imbens, 2019)
+*Nadie debería escribir un DAG de 100 variables y hacer inferencias basadas en eso. Ese sería un enfoque descabellado porque el análisis sería totalmente impenetrable. Desarrolle un diseño de investigación donde ese DAG de 100 variables se reduzca trivialmente a un problema familiar (¡por ejemplo, VI!)*
+:::
+
+
+## Actividad {background-color="#692044"}
+
+Abra [www.dagitty.net](http://www.dagitty.net) y ejecútelo. Allí, puede crear un DAG, obtener una lista de implicaciones comprobables y verificar si un efecto está identificado bajo el DAG.
+
+* Revise el siguiente artículo de [Sharkey et al.](https://www.rootcausecoalition.org/wp-content/uploads/2018/08/Community-and-the-Crime-Decline-The-Causal-Effect-of-Local-Nonprofits-on-Violent-Crime.pdf) (vea el Enfoque Analítico) e intente reconstruir el DAG subyacente para el modelo a largo plazo:
+
+  * Comparta su resultado
+  * ¿Está identificado el efecto?
+  * ¿Puede pensar en posibles violaciones de sus supuestos?
+  
+* Revise el siguiente artículo de [Doyle et al.](https://www.rootcausecoalition.org/wp-content/uploads/2018/08/Community-and-the-Crime-Decline-The-Causal-Effect-of-Local-Nonprofits-on-Violent-Crime.pdf) (vea la Sección III. Estrategia Empírica) e intente reconstruir el DAG subyacente: 
+
+  * Comparta su resultado
+  * ¿Está identificado el efecto?
+  * ¿Puede pensar en posibles violaciones de sus supuestos?
