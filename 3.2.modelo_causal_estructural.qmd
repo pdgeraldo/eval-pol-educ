@@ -1,0 +1,964 @@
+---
+title: "Modelo Causal Estructural"
+author: "Pablo Geraldo Bastías"
+logo: "https://fundit.fr/sites/default/files/styles/max_650x650/public/institutions/capture-decran-2023-07-07-162216.png?itok=1CkwlJEu"
+include-in-header:
+  - text: |
+      <style>
+      .reveal .slide-logo {
+        max-height: unset;
+        height: 100px;
+      }
+      </style>
+footer: "Modelo Causal Estructural"
+date: 05/06/2025
+date-format: long
+format: 
+  revealjs:
+    theme: simple
+    width: 1600
+    height: 900
+    transition: slide
+    slide-number: c/t
+    chalkboard: true
+    auto-stretch: false
+callout-appearance: simple
+---
+
+
+# Plan de la sesión {background-color="#17a091"}
+
+\newcommand\indep{\perp\!\!\!\perp}
+\newcommand\nindep{\not\!\perp\!\!\!\perp}
+
+
+## Resumen de la sesión anterior
+
+* Estudiamos la diferencia entre [**ver**]{.fragment .highlight-red} (el enfoque de Estadística/ML) y [**hacer**]{.fragment .highlight-red} (el enfoque de la inferencia causal)
+
+* Estudiamos la importancia de utilizar el lenguaje formal de resultados potenciales para:
+  
+  + aclarar *qué queremos saber* ([**estimando**]{style="color:blue"})
+  
+  + identificar *razones de las discrepancias* entre lo que observamos y nuestro objetivo ([**sesgo**]{style="color:blue"}) 
+  
+  + formalizar *lo que debe ser cierto* para que nuestro estimando sea identificado con un determinado *estimador* ([**supuestos**]{style="color:blue"})
+  
+  
+* Estudiamos el papel de la **aleatorización** para identificar efectos causales [**por diseño**]{style="color:green"}.
+
+. . .
+
+Pero ¿qué hacemos cuando tenemos experimentos *menos que perfectos*?
+
+. . .
+
+¿Y cómo evaluar nuestros supuestos con *datos observacionales*?
+
+
+## Clase 2: De los supuestos causales a los modelos causales
+
+Al introducir los resultados potenciales, enfatizamos que no es el método lo que hace que nuestros resultados sean causales, sino nuestros [**supuestos**]{style="color:red"}
+
+. . .
+
+Sin embargo, ¿qué hace que nuestros supuestos sean creíbles?
+
+. . .
+
+Para responder a esa pregunta, debemos ser explícitos sobre nuestro **modelo**, es decir, cómo creemos que funciona el mundo
+
+. . . 
+
++ En esta clase introduciremos un marco que facilita la formulación de tales modelos de manera fácil e intuitiva
+
++ Desarrollaremos la maquinaria necesaria para ser explícitos sobre nuestro modelo y derivar sus implicaciones comprobables
+
++ Los resultados potenciales aparecen ahora, no como *primitivos*, sino como cantidades *derivadas* de una entidad más fundamental: un [*modelo estructural*]{style="color:green"}
+
+. . . 
+
+Los investigadores a menudo dejan el modelo implícito y sin especificar. Argumentaré que hacerlo explícito puede mejorar enormemente la transparencia en la comunicación científica
+
+# Modelos gráficos {background-color="#17a091"}
+
+## ¿Por qué modelos gráficos?
+
+Formalmente, los resultados potenciales son suficientes para especificar nuestro estimando, las fuentes de sesgo y los supuestos necesarios para la identificación causal.
+
+. . .
+
+Sin embargo, evaluar la plausibilidad de los supuestos de identificación depende de que los investigadores puedan razonar sobre la independencia (condicional) entre variables posiblemente *contrafactuales*. 
+
+. . .
+
+¿Alguna idea sobre [cómo evaluar]{style="color:blue"} el supuesto sobre la independencia *condicional* de los **resultados potenciales** con respecto al tratamiento, sin aleatorización?
+
+. . .
+
+Ciertamente podemos *entender* la afirmación de que el tratamiento se asigna **como si fuera aleatorio** ajustando por covariables. Pero ¿qué hay de su plausibilidad?
+
+---
+
+## ¿Por qué modelos gráficos?
+### Evaluando la ignorabilidad
+
+
+Cuando decimos que la asignación del tratamiento es [**fuertemente ignorable**]{style="color:red"} estamos afirmando que $P(Y_d|D=d) = P(Y_d)$, ¡pero nunca llegamos a observar la distribución completa de los resultados potenciales!
+
+
+* ¿Qué tipo de criterios deberíamos usar al discutir las afirmaciones causales de otros? 
+
+* ¿Qué tipo de criterios deberíamos usar en nuestra propia investigación para juzgar si estamos obteniendo lo que buscamos?
+
+Aquí es donde brillan los DAGs, ofreciendo un criterio gráfico que es equivalente a la declaración de no confusión, el [*criterio de puerta trasera*]{style="color:red"}.
+
+
+## Modelo Causal Estructural (SCM)
+
+Enfoque unificador para la inferencia causal, desarrollado por Pearl, Robins, entre otros, siguiendo los primeros desarrollos de Wright:
+
+* Modelos de Ecuaciones Estructurales (no paramétricos)
+  
+* Generalización del análisis de trayectorias y SEM con los que podrías estar familiarizado
+
+* Representación gráfica mediante Gráficos Acíclicos Dirigidos (DAGs)
+
+* Los Resultados Potenciales [**se derivan** de]{style="color:blue"} un SCM
+
+* Representación transparente de **supuestos cualitativos**
+
+* Implicaciones comprobables de nuestro modelo del proceso generador de datos
+---
+
+
+## Gráficos Acíclicos Dirigidos (DAGs)
+
+Los modelos gráficos probabilísticos son objetos matemáticos que representan relaciones entre variables (factorización de probabilidad) 
+
+Están compuestos por dos ingredientes: [**nodos**]{style="color:green"} (vértices) y [**aristas**]{style="color:green"} (enlaces)
+
+Los Gráficos Acíclicos Dirigidos (DAGs) son una clase de modelos gráficos, con las siguientes características:
+
+. . .
+
+* [**Dirigidos**]{.fragment .highlight-blue}: Las aristas apuntan *desde* una variable *hacia* otra variable
+
+* [**Acíclicos**]{.fragment .highlight-blue}: Las trayectorias en el gráfico fluyen en cierta dirección, si sigues las aristas no puedes volver al punto de partida
+
+* [**Gráfico**]{.fragment .highlight-blue}: ¡bueno, lo entiendes!
+
+. . .
+
+:::{.callout-warning}
+## ¡Importante! Bajo ciertas condiciones, un DAG puede interpretarse causalmente, en cuyo caso hablamos de "DAGs causales" o diagramas causales
+
+Básicamente, esto ocurre cuando asumimos que ningún par de nodos comparte un ancestro común que no esté incluido en el DAG
+:::
+
+
+---
+
+## Trayectorias
+
+Podemos ir de una variable a otra siguiendo una [*trayectoria*]{style="color:blue"} a lo largo de las aristas 
+
+Cuando puedes recorrer una trayectoria sin chocar con una arista en dirección opuesta, la llamamos [**trayectoria conectante**]{style="color:green"} que transmite información
+
+Cuando encuentras una arista apuntando en dirección opuesta a lo largo de una trayectoria, la llamamos [**trayectoria bloqueante**]{style="color:red"} que no transmite información
+
+
+:::{.callout-warning}
+## Fidelidad
+La $d-$conexión en el gráfico implica asociación entre variables en los datos, mientras que la $d-$separación implica su independencia
+:::
+
+Ten en cuenta: ¡a veces **no** se trata de las variables (solas), sino de las trayectorias que, juntas, crean!
+
+## Bloques fundamentales
+
+* Una [**cadena**]{style="color:green"}, en la que puedes viajar de $X$ a $Y$ a través de $M$, es una trayectoria $d-$conectada. Todas las variables están [*marginalmente asociadas*]{style="color:green"}
+
+$$X \color{green}{\rightarrow} M \color{green}{\rightarrow} Y$$
+
+* Una [**bifurcación**]{style="color:green"}, en la que puedes ir de una causa común $W$ tanto a $X$ como a $Y$ es una trayectoria $d-$conectada. Todas las variables están [*marginalmente asociadas*]{style="color:green"}
+
+
+$$X \color{green}{\leftarrow} W \color{green}{\rightarrow} Y$$
+
+* Un [**colisionador**]{style="color:red"}, en el que no puedes ir de $X$ a $Y$ debido a dos aristas que apuntan a una tercera variable $C$, es una trayectoria $d-$separada. $X$ e $Y$ son [*marginalmente independientes*]{style="color:red"}
+ 
+
+$$X \color{red}{\rightarrow} C \color{red}{\leftarrow} Y$$
+
+
+## Invirtiendo el interruptor
+
+* Cuando ajustas por la variable intermedia $M$ en una cadena, $X$ e $Y$ se vuelven $d-$separadas y, por lo tanto, [*condicionalmente independientes*]{style="color:red"}: 
+
+$$X \rightarrow \boxed{M} \color{red}{\rightarrow} Y$$
+
+* Cuando ajustas por la causa común $W$ en una bifurcación, $X$ e $Y$ se vuelven $d-$separadas y, por lo tanto, [*condicionalmente independientes*]{style="color:red"}: 
+
+$$X \color{red}{\leftarrow} \boxed{W} \color{red}{\rightarrow} Y$$
+
+* Cuando ajustas por una variable colisionadora $C$, el par $X$ e $Y$ se vuelven $d-$conectadas y, por lo tanto, [*condicionalmente asociadas*]{style="color:green"}: 
+
+$$X \color{green}{\cdots} \boxed{C} \color{green}{\cdots} Y$$
+
+## Representaciones alternativas
+
+<br>
+
+Un modelo gráfico es [una posible]{style="color:green;"} representación de un sistema causal. 
+
+En el [Modelo Causal Estructural]{style="color:blue;"}, a veces recurriremos a otras representaciones alternativas, pero equivalentes. Dependiendo de lo que quieras lograr, diferentes representaciones pueden ser más o menos útiles
+
+En particular, examinaremos:
+
+* Un conjunto de [ecuaciones estructurales]{.fragment .highlight-blue} que indican dependencias funcionales entre variables
+
+* Una [factorización truncada]{.fragment .highlight-blue} de la distribución de probabilidad conjunta de las variables en el gráfico:
+
+$$P(X_1, X_2, \dots, X_n) = \prod_i P(X_i|pa_i)$$
+
+:::aside
+Esto se llama una "condición de Markov": ¡el futuro es independiente del pasado remoto condicionado al pasado inmediato!
+:::
+
+
+## Representaciones alternativas: trayectorias en cadena
+
+<br>
+
+:::{.columns}
+
+:::{.column width=50%}
+
+[**Modelo gráfico**]{style="color:blue;"}
+
+$$X \rightarrow M \rightarrow Y$$
+
+<br>
+
+| [**Ecuaciones Estructurales**]{style="color:blue;"} |
+|-----|
+| $X = f_x(U_x)$ |
+| $M = f_m(X, U_m)$ |
+| $Y = f_y(M, U_y)$ |
+
+
+
+:::aside
+Nota: ¡Los errores independientes pueden omitirse del DAG!
+:::
+
+:::
+
+:::{.column width=50%}
+
+
+[**Factorización truncada**]{style="color:blue;"}
+
+
+$$P(X,M,Y) = P(X) P(M|X) P (Y|M)$$
+
+<br>
+
+**Factorización natural**
+
+(regla de la cadena)
+
+$P(X,M,Y) = P(X|M,Y)P(M|Y)P(Y)$
+
+$P(X,M,Y) = P(M|X,Y)P(X|Y)P(Y)$
+
+$P(X,M,Y) = P(M|X,Y)P(Y|X)P(X)$
+
+$P(X,M,Y) = P(Y|X,M)P(X|M)P(M)$
+
+:::
+
+:::
+
+
+
+## Representaciones alternativas: trayectorias bifurcadas
+
+<br>
+
+:::{.columns}
+
+:::{.column width=50%}
+
+[**Modelo gráfico**]{style="color:blue;"}
+
+$$X \leftarrow W \rightarrow Y$$
+
+<br>
+
+| [**Ecuaciones Estructurales**]{style="color:blue;"} |
+|-----|
+| $X = f_x(W, U_x)$ |
+| $W = f_w(U_w)$ |
+| $Y = f_y(W, U_y)$ |
+
+
+
+:::aside
+Nota: ¡Los errores independientes pueden omitirse del DAG!
+:::
+
+:::
+
+:::{.column width=50%}
+
+
+[**Factorización truncada**]{style="color:blue;"}
+
+
+$$P(X,W,Y) = P(W) P(X|W) P (Y|W)$$
+
+<br>
+
+**Factorización natural**
+
+(regla de la cadena)
+
+$P(X,W,Y) = P(X|W,Y)P(W|Y)P(Y)$
+
+$P(X,W,Y) = P(W|X,Y)P(X|Y)P(Y)$
+
+$P(X,W,Y) = P(W|X,Y)P(Y|X)P(X)$
+
+$P(X,W,Y) = P(Y|X,W)P(X|W)P(W)$
+
+:::
+
+:::
+
+
+
+## Representaciones alternativas: trayectorias colisionadoras
+
+<br>
+
+:::{.columns}
+
+:::{.column width=50%}
+
+[**Modelo gráfico**]{style="color:blue;"}
+
+$$X \rightarrow C \leftarrow Y$$
+
+<br>
+
+| [**Ecuaciones Estructurales**]{style="color:blue;"} |
+|-----|
+| $X = f_x(U_x)$ |
+| $C = f_c(X, Y, U_c)$ |
+| $Y = f_y(U_y)$ |
+
+
+
+:::aside
+Nota: ¡Los errores independientes pueden omitirse del DAG!
+:::
+
+:::
+
+:::{.column width=50%}
+
+
+[**Factorización truncada**]{style="color:blue;"}
+
+
+$$P(X,C,Y) = P(X) P(Y) P (C|X,Y)$$
+
+<br>
+
+**Factorización natural**
+
+(regla de la cadena)
+
+$P(X,C,Y) = P(X|C,Y)P(C|Y)P(Y)$
+
+$P(X,C,Y) = P(C|X,Y)P(X|Y)P(Y)$
+
+$P(X,C,Y) = P(C|X,Y)P(Y|X)P(X)$
+
+$P(X,C,Y) = P(Y|X,C)P(X|C)P(C)$
+
+:::
+
+:::
+
+# Práctica {background-color="#17a091"}
+
+
+## Trayectorias bifurcadas
+
+
+:::{.columns}
+
+:::{.column width=50%}
+
+
+| Ecuaciones Estructurales |
+|-----|
+| $W = f_w(U_w)$ |
+| $X = f_x(W, U_x)$ |
+| $Y = f_y(W, X, U_y)$ |
+
+<br>
+
+¿Son $X$ e $Y$ marginalmente independientes?
+
+¿Son condicionalmente independientes?
+:::
+
+
+:::{.column width=50%}
+
+
+![](img\confounder1.png)
+
+El DAG incluye las siguientes trayectorias
+
+$$X \rightarrow Y$$
+
+$$X \leftarrow W \rightarrow Y$$
+:::
+
+:::
+
+## Trayectorias bifurcadas
+
+:::{.columns}
+
+:::{.column width=50%}
+
+| Ecuaciones Estructurales |
+|-----|
+| $W = f_w(U_w)$ |
+| $X = f_x(W, U_x)$ |
+| $Y = f_y(W, X, U_y)$ |
+
+
+<br>
+
+¿Son $X$ e $Y$ marginalmente independientes?
+
+¿Son condicionalmente independientes?
+:::
+
+
+:::{.column width=50%}
+
+![](img\confounder3.png)
+
+La siguiente trayectoria está abierta
+
+$$X \rightarrow Y$$
+
+Pero esta ahora está cerrada
+
+$$X \leftarrow \boxed{W} \rightarrow Y$$
+:::
+
+:::
+
+
+## Trayectorias bifurcadas
+
+:::{.columns}
+
+:::{.column width=50%}
+
+| Ecuaciones Estructurales |
+|-----|
+| $W = f_w(U_w)$ |
+| $X = f_x(W, U_x)$ |
+| $Y = f_y(W, U_y)$ |
+
+<br>
+
+¿Son $X$ e $Y$ marginalmente independientes?
+
+¿Son condicionalmente independientes?
+
+¿Hay un efecto causal de $X$ sobre $Y$?
+:::
+
+
+:::{.column width=50%}
+
+![](img\confounder2.png)
+
+El DAG incluye la siguiente trayectoria
+
+$$X \leftarrow W \rightarrow Y$$
+:::
+
+:::
+---
+
+
+## Trayectorias en cadena
+
+:::{.columns}
+
+:::{.column width=50%}
+
+| Ecuaciones Estructurales |
+|-----|
+| $X = f_x(U_x)$ |
+| $M = f_m(X, U_m)$ |
+| $Y = f_y(M, X, U_y)$ |
+
+<br>
+
+¿Son $X$ e $Y$ marginalmente independientes?
+
+¿Son condicionalmente independientes?
+
+¿Hay un efecto causal de $X$ sobre $Y$?
+:::
+
+:::{.column width=50%}
+
+![](img\mediation1.png)
+
+El DAG incluye las siguientes trayectorias
+
+$$X \rightarrow Y$$
+
+$$X \rightarrow M \rightarrow Y$$
+:::
+:::
+---
+
+
+## Trayectorias en cadena
+
+:::{.columns}
+
+:::{.column width=50%}
+
+| Ecuaciones Estructurales |
+|-----|
+| $X = f_x(U_x)$ |
+| $M = f_m(X, U_m)$ |
+| $Y = f_y(M, X, U_y)$ |
+
+<br>
+
+¿Son $X$ e $Y$ marginalmente independientes?
+
+¿Son condicionalmente independientes?
+
+¿Hay un efecto causal de $X$ sobre $Y$?
+:::
+
+:::{.column width=50%}
+
+![](img\mediation2.png)
+
+El DAG incluye la siguiente trayectoria
+
+$$X \rightarrow Y$$
+
+Pero esta trayectoria ahora está cerrada
+
+$$X \rightarrow \boxed{M} \rightarrow Y$$
+:::
+
+:::
+
+
+## Trayectorias colisionadoras
+
+:::{.columns}
+
+:::{.column width=50%}
+
+| Ecuaciones Estructurales |
+|-----|
+| $X = f_x(U_x)$ |
+| $Y = f_y(W, X, U_y)$ |
+| $C = f_c(X, Y, U_c)$ |
+
+<br>
+
+¿Son $X$ e $Y$ marginalmente independientes?
+
+¿Son condicionalmente independientes?
+
+¿Hay un efecto causal de $X$ sobre $Y$?
+:::
+
+:::{.column width=50%}
+
+![](img\collider1.png)
+
+El DAG incluye las siguientes trayectorias
+
+$$X \rightarrow Y$$
+
+$$X \rightarrow C \leftarrow Y$$
+:::
+
+:::
+---
+
+## Trayectorias colisionadoras
+
+:::{.columns}
+
+:::{.column width=50%}
+
+| Ecuaciones Estructurales |
+|-----|
+| $X = f_x(U_x)$ |
+| $Y = f_y(W, U_y)$ |
+| $C = f_c(X, Y, U_c)$ |
+
+<br>
+
+¿Son $X$ e $Y$ marginalmente independientes?
+
+¿Son condicionalmente independientes?
+
+¿Hay un efecto causal de $X$ sobre $Y$?
+:::
+
+:::{.column width=50%}
+
+![](img\collider2.png)
+
+El DAG incluye la siguiente trayectoria
+
+$$X \rightarrow C \leftarrow Y$$
+:::
+
+:::
+---
+
+## Trayectorias colisionadoras
+
+:::{.columns}
+
+:::{.column width=50%}
+
+| Ecuaciones Estructurales |
+|-----|
+| $X = f_x(U_x)$ |
+| $Y = f_y(W, X, U_y)$ |
+| $C = f_c(X, Y, U_c)$ |
+
+<br>
+
+¿Son $X$ e $Y$ marginalmente independientes?
+
+¿Son condicionalmente independientes?
+
+¿Hay un efecto causal de $X$ sobre $Y$?
+:::
+
+:::{.column width=50%}
+
+![](img\collider3.png)
+
+El DAG incluye la siguiente trayectoria (abierta)
+
+$$X \rightarrow \boxed{C} \leftarrow Y$$
+:::
+
+:::
+
+
+## Nota al margen: ¿son tan importantes los colisionadores? {background-color="#dce0ca"}
+
+<br> 
+
+Una pregunta común (y un área de debate entre profesionales) es si los colisionadores son realmente tan importantes *en entornos aplicados*. Esta es una pregunta difícil de responder, porque, ya sabes... simplemente no lo sabemos. 
+
+Pero sabemos que son **posibles** y que su importancia dependería de la estructura de nuestro gráfico causal.
+
+Algunos ejemplos convincentes de sesgo por colisionador en ciencias sociales recientes son discutidos por:
+
+* [Shalizi y Thomas (2011)](https://journals.sagepub.com/doi/abs/10.1177/0049124111404820) en el contexto de homofilia de red y contagio
+
+* [Breen (2018)](https://academic.oup.com/esr/article/34/6/603/5094485) en el contexto de movilidad intergeneracional
+
+* [Knox, Lowe y Mummolo (2020)](https://scholar.princeton.edu/jmummolo/publications/bias-built-how-administrative-records-mask-racially-biased-policing) en el contexto de tiroteos policiales
+
+Una gran introducción general al tema es ofrecida por [Elwert y Winship (2014)](https://www.annualreviews.org/doi/abs/10.1146/annurev-soc-071913-043455)
+
+---
+
+
+## Operador-do e intervenciones
+
+
+Pearl introdujo el operador $do-$ para distinguir claramente entre observaciones pasivas e intervenciones en el proceso generador de datos
+
+En otras palabras, es una forma de hacer explícita la brecha entre cantidades intervencionales y nuestras expectativas condicionales más familiares
+
+La identificación causal corresponde a eliminar el operador $do-$ de una expresión, siguiendo las reglas del $do-$cálculo, reduciéndola a una cantidad observacional. Si no hay equivalencia, significa que la cantidad de interés no está identificada
+
+Dada la correspondencia entre un sistema de ecuaciones estructurales no paramétricas y un DAG dado, podemos expresar la operación de **hacer** como una *cirugía mínima en la ecuación estructural que define el tratamiento*
+
+---
+
+## Gráficos intervencionales
+
+:::{.columns}
+
+:::{.column width=50%}
+
+| Modelo Causal Estructural |
+|---|
+| $Z_1 = f_{z1}(U_{z1})$ |
+| $Z_2 = f_{z2}(U_{z2})$ |
+| $W = f_{w}(Z_1, Z_2, U_{w})$ |
+| $X = f_{z1}(Z_1, W, U_{x})$ |
+| $Y = f_{y}(Z_2, W, U_{y})$ |
+
+Comencemos con el proceso generador de datos observacional anterior
+
+:::
+
+:::{.column width=50%}
+![](img\intervention1.png){width=65%}
+:::
+
+:::
+
+---
+
+## Gráficos intervencionales
+
+:::{.columns}
+
+:::{.column width=50%}
+
+| Modelo Causal Estructural |
+|---|
+| $Z_1 = f_{z1}(U_{z1})$ |
+| $Z_2 = f_{z2}(U_{z2})$ |
+| $W = f_{w}(Z_1, Z_2, U_{w})$ |
+| $X = x$ |
+| $Y = f_{y}(Z_2, W, U_{y})$ |
+
+Intervenir en el modelo para hacer $X=x$ crea un gráfico intervencional $G_{\bar{X}}$, en el cual todas las flechas entrantes a $X$ han sido eliminadas
+
+:::
+
+:::{.column width=50%}
+![](img\intervention2.png){width=65%}
+:::
+
+:::
+
+---
+
+
+
+## Gráficos intervencionales
+
+:::{.columns}
+
+:::{.column width=50%}
+
+
+| Modelo Causal Estructural |
+|---|
+| $Z_1 = f_{z1}(U_{z1})$ |
+| $Z_2 = f_{z2}(U_{z2})$ |
+| $W = f_{w}(Z_1, Z_2, U_{w})$ |
+| $X = f_{z1}(Z_1, W, U_{x})$ |
+| $Y = f_{y}(Z_2, W, U_{y})$ |
+
+El propósito de un estudio observacional es permitir solo **trayectorias causales** entre el tratamiento $X$ y el resultado $Y$, y bloquear todas las **trayectorias no causales**
+
+:::
+
+:::{.column width=50%}
+![](img\intervention3.png){width=65%}
+
+Ajustar por $W$ bloquea una trayectoria no causal, pero abre una nueva. 
+
+$P(Y|do(x))$ no está identificado condicionando solo por $W$
+
+:::
+
+:::
+
+---
+
+
+
+## Gráficos intervencionales
+
+:::{.columns}
+
+:::{.column width=50%}
+
+| Modelo Causal Estructural |
+|---|
+| $Z_1 = f_{z1}(U_{z1})$ |
+| $Z_2 = f_{z2}(U_{z2})$ |
+| $W = f_{w}(Z_1, Z_2, U_{w})$ |
+| $X = f_{z1}(Z_1, W, U_{x})$  |
+| $Y = f_{y}(Z_2, W, U_{y})$ |
+
+El propósito de un estudio observacional es permitir solo **trayectorias causales** entre el tratamiento $X$ y el resultado $Y$, y bloquear todas las **trayectorias no causales**
+:::
+
+:::{.column width=50%}
+![](img\intervention4.png){width=65%}
+
+Ajustar por $(Z_1,W)$ bloquea todas las trayectorias no causales
+
+$P(Y|do(x))$ está identificado condicionando por $(Z_1,W)$
+:::
+
+:::
+
+---
+
+
+
+## Gráficos intervencionales
+
+:::{.columns}
+
+:::{.column width=50%}
+
+| Modelo Causal Estructural |
+|---|
+| $Z_1 = f_{z1}(U_{z1})$ |
+| $Z_2 = f_{z2}(U_{z2})$ |
+| $W = f_{w}(Z_1, Z_2, U_{w})$ |
+| $X = f_{z1}(Z_1, W, U_{x})$  |
+| $Y = f_{y}(Z_2, W, U_{y})$ |
+
+El propósito de un estudio observacional es permitir solo **trayectorias causales** entre el tratamiento $X$ y el resultado $Y$, y bloquear todas las **trayectorias no causales**
+:::
+
+:::{.column width=50%}
+
+![](img\intervention5.png){width=65%}
+
+Ajustar por $(Z_2,W)$ también bloquea todas las trayectorias no causales
+
+$P(Y|do(x))$ está identificado condicionando por $(Z_2,W)$
+:::
+
+:::
+
+---
+
+## Criterio de Puerta Trasera (Pearl) {background-color="#002f87"}
+
+<br>
+
+Lo que acabamos de hacer se puede resumir mediante el criterio de puerta trasera
+
+Un conjunto de variables $W$ satisface el criterio de puerta trasera relativo a un par ordenado de variables $(X,Y)$ en un DAG $G$ si:
+
+  (i) ningún nodo en $W$ es descendiente de $X$; y
+  (ii) $W$ bloquea cada trayectoria entre $X$ e $Y$ que contiene una flecha hacia $X$
+
+$\color{red}{\text{Importante:}}$ satisfacer el criterio de puerta trasera implica el supuesto de no confusión
+$$Y_x \indep X|W$$
+
+El **ajuste de puerta trasera** (también conocido como **fórmula-g**) indica que podemos recuperar el efecto de $X$ sobre $Y$ ajustando por cualquier $W$ que satisfaga el criterio de puerta trasera
+
+$$P(Y|do(x)) = \sum_w P(Y|X,W)P(W)$$
+
+:::aside
+Pearl, *Causality*, pp.79-81
+:::
+---
+
+
+## Actividad breve (5 minutos) {background-color="#692044"}
+
+¿Puedes verificar, usando las reglas que practicamos, si es posible identificar el efecto causal de $D$ sobre $Y$ en los siguientes gráficos?
+
+Modelo 1: 
+
+$D \rightarrow M$
+
+$M \rightarrow Y$
+
+$D \leftarrow (U) \rightarrow Y$
+
+Donde $(U)$ no es observable y, por lo tanto, no se puede ajustar por él
+
+
+Modelo 2:
+
+$D \rightarrow Y$
+
+$Z \rightarrow D$
+
+$D \leftarrow (U) \rightarrow Y$
+
+
+Donde $(U)$ no es observable y, por lo tanto, no se puede ajustar por él
+
+
+
+## Información clave del SCM
+
+
+* La identificación causal depende de un modelo dado que codifica nuestros supuestos
+
+* La identificación causal consiste en encontrar una cantidad observacional que sea equivalente a una cantidad intervencional
+
+* La confusión (y el sesgo) es una propiedad de las trayectorias en un gráfico, no de las variables
+
+* La confusión es relativa al par $(X,Y)$, no solo a $X$
+
+* No es necesario ajustar por todos los *padres* del tratamiento para bloquear todas las trayectorias de puerta trasera
+
+* El sesgo no disminuye monótonamente con el número de variables incluidas
+
+* El $do-$cálculo puede usarse para identificar el efecto de múltiples intervenciones, para recuperarse de datos faltantes y para generalizar los resultados del estudio.
+
+
+## Limitaciones del SCM
+
+. . . 
+
+Condicionado a tu modelo, la mayoría de las tareas de identificación son bastante triviales (algorítmicas). ¡Pero antes de eso necesitas asumir un cierto DAG!
+
+. . .
+
+:::{.callout-warning}
+## "La causalidad está en el modelo"
+James Heckman (2005)
+:::
+
+. . . 
+
+Sin embargo, ¡esto es algo que siempre hacemos! El único asunto es cuán transparentes somos acerca de los supuestos que estamos haciendo de todos modos
+
+. . .
+
+Otro problema, más importante para cuestiones como el análisis de mediación y los contrafactuales en general, es que a veces estamos haciendo más supuestos de los que estamos dispuestos a aceptar
+
+. . . 
+
+Para estos casos, otros modelos causales (y gráficos), como los [Gráficos de Intervención de Mundo Único](https://www.csss.washington.edu/Papers/wp128.pdf) (Richardson y Robins, 2013) pueden ayudar
+
+. . . 
+
+Siendo completamente no paramétricos, ciertos modelos canónicos no se identifican usando DAGs (como las VI). 
+
+. . . 
+
+Sin embargo, ¡esto solo muestra que requieren supuestos paramétricos, por débiles que sean!
