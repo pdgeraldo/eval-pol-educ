@@ -1,0 +1,465 @@
+---
+title: "Selección en base a observables"
+title-block-banner: true
+author: "Pablo Geraldo Bastías"
+logo: "https://fundit.fr/sites/default/files/styles/max_650x650/public/institutions/capture-decran-2023-07-07-162216.png?itok=1CkwlJEu"
+include-in-header:
+  - text: |
+      <style>
+      .reveal .slide-logo {
+        max-height: unset;
+        height: 100px;
+      }
+      </style>
+footer: "Selección en base a observables"
+date: 05/06/2025
+date-format: long
+format: 
+  revealjs:
+    theme: simple
+    width: 1600
+    height: 900
+    transition: slide
+    slide-number: c/t
+    chalkboard: true
+    auto-stretch: false
+callout-appearance: simple
+---
+
+# Plan de la sesión {background-color="#17a091"}
+
+\newcommand\indep{\perp\!\!\!\perp}
+\newcommand\nindep{\not\!\perp\!\!\!\perp}
+
+## Selección en base a observables
+
+Durante esta clase, cubriremos una de las estrategias de identificación más populares: selección sobre observables, también conocida como ignorabilidad/independencia condicional (estadística), *unconfoundedness* o ausencia de sesgos de confusión (economía), e intercambiabilidad condicional (epidemiología)
+
+* Primero, la ubicaremos bajo el paraguas general de [estudios observacionales](). 
+
+* Luego revisaremos los supuestos requeridos y mostraremos los resultados de identificación
+
+* Finalmente, discutiremos métodos comunes de estimación: regresión (incluyendo imputación), subclasificación y emparejamiento, ponderación, y una vista previa de estimadores aumentados
+
+# Estudios observacionales {background-color="#00a191"}
+
+## ¿Qué es un estudio observacional?
+
+Ya discutimos la importancia de la [**asignación aleatoria**]{style="color:green"} para justificar conclusiones causales y realizar inferencia estadística
+
+. . .
+
+Los datos observacionales se generan cuando el tratamiento de interés [**no**]{style="color:red"} está bajo el control del investigador (por ejemplo, datos de encuestas, registros administrativos, etc.)
+
+. . .
+
+Un estudio observacional es un intento de utilizar datos observacionales para [*aproximar*]{style="color:blue"} conclusiones causales (o, como algunos dirían, "aproximar un experimento")
+
+. . .
+
+Mientras que en los experimentos, la intercambiabilidad (condicional) se justifica por diseño, en los estudios observacionales se basa en supuestos [no comprobables y extra-estadísticos]{.fragment .fade-in .highlight-red}
+
+
+## Estudios observacionales creíbles
+
+(¡No todas las comparaciones son iguales!)
+
+. . .
+
+Es demasiado común ejecutar algún análisis de regresión y analizar su resultado como si una comparación *causal* ("controlada") creíble pudiera obtenerse inmediatamente de los datos
+
+. . .
+
+¡La mayoría de las veces, simplemente reconocer que "nuestros resultados no son causales" no es suficiente para evitar una interpretación causal!
+
+. . .
+
+[Un estudio observacional creíble debe diseñarse cuidadosamente para abordar problemas comunes y descartar explicaciones alternativas]{style="color:green"}
+
+## Estudios observacionales creíbles
+
+<br>
+
+* La asignación no es aleatoria, pero ¿se entiende bien?
+
+* ¿Podemos explicar por qué algunas unidades que parecen similares reciben tratamientos diferentes?
+
+* ¿Tenemos medidas confiables de nuestras variables de interés? 
+
+* ¿La temporalidad de la medición nos permite ordenarlas?
+
+* ¿Podemos verificar el "balance" en características observables?
+
+* ¿Podemos cuantificar la influencia que tendría la confusión no observada en nuestros resultados?
+
+* ¿Podemos descartar explicaciones alternativas al "efecto del tratamiento" observado?
+
+# Ausencia de sesgos de confusión {background-color="#00a191"}
+
+## Configuración general
+
+Supongamos lo siguiente:
+
+* Observamos unidades $i = 1, \dots, n$
+* Observamos un tratamiento $D \in {0,1}$
+* Asumimos que los resultados potenciales $Y_{di}$ están bien definidos
+
+. . . 
+
+Nuestra cantidad de interés puede ser (más comúnmente) el ATE o el ATT
+
+. . . 
+
+Tenemos una colección de $k$ covariables [**pre-tratamiento**]{style="color:blue"}: $X_i = [X_{i1}, \dots , X_{ik}]$
+
+* Predeterminadas / causalmente preceden a $D_i$
+* Si $X_i$ causa tanto a $D$ como a $Y$, [*confundiría*]{style="color:red"} la relación entre ellos
+* Si $X_i$ es potencialmente afectada por $D_i$, entonces posiblemente sea un [*mediador*]{style="color:red"}, y debe manejarse con doble cuidado
+
+Más formalmente: $X$ es un conjunto de ajuste válido según el criterio de puerta trasera
+
+## Supuestos
+
+El supuesto principal en este contexto se suele denominar ausencia de confusión, ignorabilidad condicional o intercambiabilidad condicional
+
+Se puede formalizar como:
+
+$$
+\{Y_{1i}, Y_{0i}\} \indep D_i | X_i
+$$
+
+:::{.callout-note}
+## Léase así
+Entre unidades con los mismos valores de $X$, el tratamiento $D_i$ se asigna como si fuera aleatorio
+:::
+
+. . .
+
+Para poder condicionar por $X$, también requerimos positividad (o superposición): el tratamiento no es determinístico en ningún valor relevante de $X=x$
+
+$$
+0 < P(D_i = 1 | X_i) < 1
+$$
+
+## Identificación de ATE/ATT
+
+**Intuición**: Dentro de estratos de X, tenemos un experimento
+
+**Prueba**: Comencemos con los efectos por estrato $\tau(x)$
+
+$$
+E[Y_{1i} - Y_{0i}|X=x] = E[Y_{1i}|X=x] - E[Y_{0i}|X=x]  
+$$
+$$
+= E[Y_{1i}|X=x, D_i=1] - E[Y_{0i}|X=x, D_i=0] 
+$$
+
+$$
+= E[Y_{i}|X=x, D_i=1] - E[Y_{i}|X=x, D_i=0]
+$$
+Luego, usemos el supuesto de **positividad**:
+
+$$
+ATE = E_x[\tau(x)] = E_x(E[Y_{1i} - Y_{0i}|X=x] )
+$$
+
+$$
+= \sum_x \tau(x) p(x)
+$$
+
+# Estimación {background-color="#00a191"}
+
+## Panorama de estimación
+
+Hemos visto que, bajo nuestros supuestos no paramétricos, el ATE/ATT se identifica mediante la fórmula de ajuste
+
+En la práctica, hay varias formas de implementar estas ideas, y diferentes estimadores incorporan supuestos adicionales
+
+Los más utilizados son
+
+- Subclasificación y Emparejamiento
+- Ponderación
+- Regresión
+- Estimadores aumentados
+
+Echemos un vistazo a cada uno en general, antes de pasar a una aplicación práctica
+
+
+# Modelando la asignación del tratamiento {background-color="#E9004C"}
+
+## Subclasificación
+
+Cuando $X$ es discreto, el estimador de subclasificación surge naturalmente, como se vio antes
+
+Solo necesitamos estimar efectos específicos por estratos y promediar según las proporciones de la población de referencia
+
+¿Estamos estimando algún modelo? ¿Hay "parámetros" en el estimador de subclasificación?
+
+. . .
+
+Sin embargo, a medida que aumenta el número de covariables, el estimador se vuelve inviable
+
+Es por eso que otros estimadores se han vuelto mucho más utilizados
+
+## Emparejamiento
+
+Para cada unidad tratada $i$ con covariables $X_i$, estimaremos $\tau_i = Y_{1i} - Y_{0i}$
+
+. . .
+
+Para las unidades tratadas, inmediatamente tenemos $Y_1$. Pero ¿de dónde obtenemos $Y_0$?
+
+* **Emparejamiento**: tomamos prestados los resultados potenciales faltantes de unidades de control con (casi) el mismo $X_i$
+
+El estimador es entonces:
+
+$$
+\hat{\tau}_{ATT} = \frac{1}{N_t} \sum_{D=1}(Y_i - Y_{j(i)})
+$$
+
+Donde $Y_{j(i)}$ es el resultado de la unidad $j$, que es la más cercana a $i$ en términos de sus covariables
+
+. . .
+
+En el caso más simple, $j$ es una única unidad, sin reemplazo. En versiones más complicadas, puede ser un promedio (ponderado) de unidades que se reutilizan varias veces
+
+. . .
+
+:::{.callout-warning}
+## ¡Pero cuidado con la maldición de la dimensionalidad!
+:::
+
+## Recuerda: El emparejamiento NO es una estrategia de identificación
+
+
+## Ponderación 
+
+La idea de ponderación proviene de la investigación por encuestas: ¿cómo obtenemos una muestra representativa?
+
+Es similar, pero en dirección opuesta, a las estrategias anteriores:
+
+. . .
+
+* ¡En lugar de efectos específicos por estratos que luego se reponderan por $X$, hacemos que $X$ se vea similar entre grupos y luego tomamos un promedio simple!
+
+. . .
+
+Recordemos que la diferencia de medias puede verse como:
+
+$$
+\sum_x E[Y_i | D=1, X]\color{red}{P(X|D=1)} - \sum_x E[Y_i | D=0, X]\color{red}{P(X|D=0)}
+$$
+
+[¿Cómo resolver la discrepancia en los pesos?]{style="color:red"}
+
+. . .
+
+Queremos que los pesos de la diferencia de medias sean $P(X)$ para todos, por lo que podemos reponderarlos por $\frac{P(D_i)}{P(D_i|X_i)}$ (pero, ¡note que esto requiere un modelo para $P(D_i|X_i)$!)
+
+## ¿Qué hay del *propensity score*?
+
+Los pesos recién mencionados generalmente se conocen como *(stabilized) propensity score weights*. Otros nombres para el mismo objeto son *inverse probability of treatment weighting* o simplemente *inverse probability weighting* (IPW)
+
+Estos pesos requieren estimar un modelo para la asignación del tratamiento $P(D_i|X_i)$. En otras palabras, requieren que ajustemos un modelo para [*la probabilidad de recibir el tratamiento*]{style="color:blue"}, $P(D_i=1|X_i) = e(X_i)$ (o $\pi(X_i)$)
+
+. . .
+
+El uso de la puntuación de propensión para ponderación (o emparejamiento, o ajuste de regresión) se basa en un resultado simple pero poderoso. Si:
+
+$$
+\{Y_1,Y_0\} \indep D_i | X_i
+$$
+Entonces,
+
+$$
+\{Y_1,Y_0\} \indep D_i | e(X_i)
+$$
+
+. . .
+
+El propensity score es un [*puntuación que asegura balance*]{style="color:green"}, que logrará equilibrio en las variables utilizadas para estimar la puntuación de propensión, [*en expectativa*]{style="color:red"}
+
+## Pesos de puntuación de propensión
+
+Para el ATE, los IPW correspondientes son:
+
+$$
+w_i = \frac{D_i}{e(X_i)} + \frac{1-D_i}{1-e(X_i)}
+$$
+
+. . .  
+
+* ¿Qué harían estos pesos para las unidades tratadas? ¿Y para los controles?
+
+* ¿Cómo modificaría estos pesos para apuntar al ATT?
+
+**Pista**: multiplica por $e(X_i)$
+
+:::aside
+Siguiendo a Chattopadhyay, Hase, y Zubizarreta (2020)
+:::
+
+## Balance
+
+Tradicionalmente, el balance en la distribución de covariables se evalúa basándose en la diferencia estandarizada absoluta en medias (ASMD):
+
+$$
+ASMD(x) = \frac{|\bar{x}_{w,t} - \bar{x}_{w,c}|}{\sqrt{(s^2_t + s^2_c)/2}}
+$$
+
+Chattopadhyay, Hase, y Zubizarreta (2020) propusieron usar una versión *dirigida* de esto en su lugar: 
+
+$$
+TASMD(x_g) = \frac{|\bar{x}_{w,g} - \bar{x}^*|}{s_g}
+$$
+
+## Balance
+
+Chattopadhyay, Hase, y Zubizarreta (2020) propusieron usar una versión *dirigida* de esto en su lugar: 
+
+$$
+TASMD(x_g) = \frac{|\bar{x}_{w,g} - \bar{x}^*|}{s_g}
+$$
+
+Que puede refinarse aún más como:
+
+$$
+TASMD(B_k(X)_g) = \frac{|\overline{B_k(X)_{w,g}} - \overline{B_k(X)}^*|}{s_g\{B_k(X)\}}
+$$
+
+Donde $B_k(X)$ es una transformación de la covariable original.
+
+## Recuerda: ¡La puntuación de propensión TAMPOCO es una estrategia de identificación!
+
+## Pesos de optimización (o calibración)
+
+Generalmente, cuando usamos pesos de puntuación de propensión (o emparejamiento), lo que realmente queremos lograr es el balance en las covariables. Así que el proceso implicará: 
+
+1) estimar un modelo para $e(X_i)$; 
+
+2) invertir y reponderar la muestra; 
+
+3) verificar el balance; 
+
+4) reestimar la puntuación de propensión si es necesario.
+
+. . .
+
+¿Es esa la única manera?
+
+
+## Pesos de optimización (o calibración)
+
+Pero también podemos *omitir* estos pasos, y buscar directamente pesos que exactamente (hasta un nivel de tolerancia) "balanceen" (momentos de) las covariables, a través de enfoques de optimización $\rightarrow$ [*calibración*]{style="color:red"}!
+
+
+Si es factible, esto te dará balance [*en la muestra*]{style="color:green"}
+
+Además, recuerda que el balance no es la única propiedad deseable: atención a la variabilidad frente a la estabilidad, y pesos positivos frente a negativos (interpolación frente a extrapolación)
+
+
+## Ideas comunes
+
+La subclasificación, el emparejamiento y la ponderación comparten algunas ideas comunes
+
+Lo más importante, todos permiten algunos diagnósticos *antes* de realizar el análisis de resultados: pruebas de balance
+
+Verificar el balance no requiere mirar el resultado, y puede proporcionar una guía sobre la credibilidad de los resultados por venir 
+
+. . . 
+
+* Esto es lo que Rubin quiso decir con "el diseño triunfa sobre el análisis"
+
+. . . 
+
+Pero ¡ten cuidado de confiar demasiado en la verificación del balance! (Y usa las mejores prácticas, como pruebas de equivalencia)
+
+¡También cuidado con el desequilibrio residual! Modelar el resultado puede ser útil, como veremos más adelante
+
+# Modelando la expectativa del resultado {background-color="#E9004C"}
+
+## Regresión: ¡mira *el* coeficiente!
+
+También podemos tomar un enfoque basado en modelos para estimar el efecto causal de interés
+
+Por simplicidad, supongamos que los resultados potenciales siguen cierta forma funcional:
+
+$$
+E[Y_i|D_i,X_i] = \beta_0 + \beta_1 D_i + \gamma^{\top}X_i
+$$
+
+Lo que significa que $$E[Y_0|X] = E[Y|D=0,X] = \mu_0 = \beta_0 + \gamma^{\top}X_i$$
+
+y $$E[Y_1|X] = E[Y|D=1,X] = \mu_1 = \beta_0 + \beta_1 + \gamma^{\top}X_i$$
+
+. . .
+
+¿Qué estamos asumiendo sobre el efecto del tratamiento? ¿Qué estamos asumiendo sobre los resultados potenciales? ¿Son sensatos esos supuestos?
+
+## Regresión: ¡úsala para imputación!
+
+Una forma de utilizar modelos que es menos sensible a la especificación de un solo coeficiente es usar el modelo para imputación.
+
+* Usa el(los) modelo(s) para predecir los resultados potenciales, y luego calcula la diferencia de interés
+
+* Para la inferencia, usa el bootstrap
+
+En epidemiología, esto se conoce como g-computación ("g" significa "generalizado")
+
+Esto funciona increíblemente bien, más allá de lo que te daría mirar un solo coeficiente
+
+Incluso más, esto puede combinarse con enfoques flexibles de aprendizaje automático, yendo más allá de los modelos de regresión lineal
+
+# Estimadores aumentados {background-color="#E9004C"}
+
+## IPW Aumentado 
+
+¿Podemos obtener lo mejor de ambos mundos? ¡Sí, podemos!
+
+. . .
+
+Combina el balance (ponderación) con el modelado de resultados (regresión) en un solo estimador: IPW aumentado
+
+$$
+\hat{\tau}_{AIPW} = \frac{1}{n}\sum_{i=1}^n \Big( \hat{\mu}_1(X_i) - \hat{\mu}_0 (X_i)
+$$
+
+$$
++ D_i \frac{Y_i - \hat{\mu}_1 (X_i)}{\hat{e}(X_i)} - (1-D_i)\frac{Y_i - \hat{\mu}_0(X_i)}{1-\hat{e}(X_i)} \Big)
+$$
+
+
+## IPW Aumentado
+
+
+Esto tiene la propiedad de **doble robustez** (DR): el modelo será consistente para el efecto del tratamiento si 
+
+1) el modelo de resultados o, 
+
+2) el modelo de tratamiento, están bien especificados
+
+. . .
+
+DR también puede interpretarse como un enfoque de errores multiplicativos: te acercarás más a la verdad (y *más rápido*) si combinas dos modelos no perfectos que apostando todo a un solo modelo.
+
+. . .
+
+:::{.callout-tip}
+## Importante
+
+En términos de identificación, ¡el estimador aumentado requiere el mismo supuesto de ausencia de confusión! No hay almuerzo gratis
+:::
+
+## ¿Qué hay del aprendizaje automático?
+
+Hay diferentes formas de usar el aprendizaje automático para la estimación
+
+* Modelo flexible del resultado + imputación
+
+* Modelo flexible del tratamiento + ponderación
+
+Ambos tienen problemas, por lo que se han propuesto dos marcos para incorporar métodos de ML en la estimación de efectos de tratamiento de manera fundamentada:
+
+* Targeted Minimum Loss-based Estimation (TMLE)
+
+* Double/Debiased Machine Learning (DML)
