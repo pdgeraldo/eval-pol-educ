@@ -665,8 +665,8 @@ TASMD(B_k(X)_g) = \frac{|\overline{B_k(X)_{w,g}} - \overline{B_k(X)}^*|}{s_g\{B_
 <h1>Modelando la expectativa del resultado</h1>
 
 </section>
-<section id="regresión-mira-el-coeficiente" class="slide level2">
-<h2>Regresión: ¡mira <em>el</em> coeficiente!</h2>
+<section id="regresión-buscando-el-coeficiente" class="slide level2">
+<h2>Regresión: buscando <em>el</em> coeficiente</h2>
 <p>También podemos tomar un enfoque basado en modelos para estimar el efecto causal de interés</p>
 <p>Por simplicidad, supongamos que los resultados potenciales siguen cierta forma funcional:</p>
 <p><span class="math display">\[
@@ -678,8 +678,8 @@ E[Y_i|D_i,X_i] = \beta_0 + \beta_1 D_i + \gamma^{\top}X_i
 <p>¿Qué estamos asumiendo sobre el efecto del tratamiento? ¿Qué estamos asumiendo sobre los resultados potenciales? ¿Son sensatos esos supuestos?</p>
 </div>
 </section>
-<section id="regresión-úsala-para-imputación" class="slide level2">
-<h2>Regresión: ¡úsala para imputación!</h2>
+<section id="regresión-uso-para-imputación" class="slide level2">
+<h2>Regresión: uso para imputación</h2>
 <p>Una forma de utilizar modelos que es menos sensible a la especificación de un solo coeficiente es usar el modelo para imputación.</p>
 <ul>
 <li><p>Usa el(los) modelo(s) para predecir los resultados potenciales, y luego calcula la diferencia de interés</p></li>

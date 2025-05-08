@@ -378,7 +378,7 @@ Pero ¡ten cuidado de confiar demasiado en la verificación del balance! (Y usa 
 
 # Modelando la expectativa del resultado {background-color="#E9004C"}
 
-## Regresión: ¡mira *el* coeficiente!
+## Regresión: buscando *el* coeficiente
 
 También podemos tomar un enfoque basado en modelos para estimar el efecto causal de interés
 
@@ -396,7 +396,7 @@ y $$E[Y_1|X] = E[Y|D=1,X] = \mu_1 = \beta_0 + \beta_1 + \gamma^{\top}X_i$$
 
 ¿Qué estamos asumiendo sobre el efecto del tratamiento? ¿Qué estamos asumiendo sobre los resultados potenciales? ¿Son sensatos esos supuestos?
 
-## Regresión: ¡úsala para imputación!
+## Regresión: uso para imputación
 
 Una forma de utilizar modelos que es menos sensible a la especificación de un solo coeficiente es usar el modelo para imputación.
 
